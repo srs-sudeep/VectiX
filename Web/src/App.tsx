@@ -1,4 +1,4 @@
-import { Toaster, TooltipProvider, TypographyProvider } from '@/components';
+import { Toaster, TooltipProvider } from '@/components';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import Router from '@/routes';
 import { ThemeProvider } from '@/theme';
@@ -31,15 +31,13 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <ThemeProvider>
-          <TypographyProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <RouterComponent>
-                <Router />
-              </RouterComponent>
-            </TooltipProvider>
-          </TypographyProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <RouterComponent>
+              <Router />
+            </RouterComponent>
+          </TooltipProvider>
         </ThemeProvider>
       </HelmetProvider>
     </QueryClientProvider>

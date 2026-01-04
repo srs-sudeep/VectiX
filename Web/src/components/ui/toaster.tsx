@@ -7,12 +7,9 @@ import {
   ToastTitle,
   ToastViewport,
 } from '@/components';
-import { useTypographyStore, FONT_FAMILIES } from '@/store';
 
 export function Toaster() {
   const { toasts } = useToast();
-  const { fontFamily } = useTypographyStore();
-  const selectedFont = FONT_FAMILIES.find(font => font.value === fontFamily)?.class || 'font-inter';
 
   return (
     <ToastProvider>
@@ -20,8 +17,8 @@ export function Toaster() {
         return (
           <Toast key={id} {...props}>
             <div className="grid gap-1">
-              {title && <ToastTitle className={selectedFont}>{title}</ToastTitle>}
-              {description && <ToastDescription className={selectedFont}>{description}</ToastDescription>}
+              {title && <ToastTitle>{title}</ToastTitle>}
+              {description && <ToastDescription>{description}</ToastDescription>}
             </div>
             {action}
             <ToastClose />

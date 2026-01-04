@@ -15,13 +15,11 @@ export * from '@/components/dashboard/YearlyBreakup';
 export * from '@/components/AppLogo';
 export * from '@/components/HelmetWrapper';
 export * from '@/components/Loadable';
-export * from '@/components/TypographyProvider';
 export * from '@/components/UserAvatar';
 
 //Exporting Layout Components
 export * from '@/components/navbar/LandingNavbar';
 export * from '@/components/navbar/Navbar';
-export * from '@/components/navbar/SettingsSidebar';
 export * from '@/components/navbar/SearchPanel';
 export * from '@/components/footer/MainFooter';
 export * from '@/components/sidebar/ModuleSidebar';

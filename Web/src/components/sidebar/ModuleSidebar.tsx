@@ -13,13 +13,13 @@ import { useIsMobile, useSidebarItems } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { iconMap, type SidebarModuleItem, type SidebarSubModuleTreeItem } from '@/types';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { ChevronRight, HelpCircle, LogOut, Settings } from 'lucide-react';
 import { JSX, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const getIconComponent = (iconName: keyof typeof iconMap, size: number) => {
   const IconComponent = iconMap[iconName];
-  return IconComponent ? <IconComponent size={size} /> : null;
+  return IconComponent ? <IconComponent size={size} strokeWidth={1.5} /> : null;
 };
 
 function findModuleIdByPath(modules: SidebarModuleItem[], pathname: string): string | null {
@@ -39,7 +39,6 @@ function findSubModuleByPath(subModules: SidebarSubModuleTreeItem[], pathname: s
   return false;
 }
 
-// Helper to find the exact submodule that matches the path
 function findActiveSubModule(
   subModules: SidebarSubModuleTreeItem[],
   pathname: string
@@ -56,7 +55,6 @@ function findActiveSubModule(
   return null;
 }
 
-// Helper to find the path of parent IDs to the active submodule
 function findParentIds(
   items: SidebarSubModuleTreeItem[],
   pathname: string,
@@ -78,9 +76,7 @@ export const ModuleSidebar = () => {
   const [activeModule, setActiveModule] = useState<string | null>(null);
   const [lastValidModule, setLastValidModule] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
   const [lastActiveSubModules, setLastActiveSubModules] = useState<
     Record<string, SidebarSubModuleTreeItem>
   >({});
@@ -121,14 +117,11 @@ export const ModuleSidebar = () => {
     }
   }, [isLoading, modules, activeModule, location.pathname]);
 
-  // Auto-expand parent items based on current path (batch state update)
   useEffect(() => {
     if (!isLoading && modules.length > 0 && activeModule) {
       const module = modules.find(m => m.id === activeModule);
       if (module) {
         const parentIds = findParentIds(module.subModules, location.pathname) || [];
-
-        // If no current path match, expand parents of last active submodule
         if (parentIds.length === 0 && lastActiveSubModules[activeModule]) {
           const lastActiveParentIds =
             findParentIds(module.subModules, lastActiveSubModules[activeModule].path || '') || [];
@@ -142,24 +135,18 @@ export const ModuleSidebar = () => {
 
   const isActivePath = (path?: string) => {
     if (!path) return false;
-
-    // Check if current path matches exactly
     const exactMatch = location.pathname === path || location.pathname.startsWith(path);
     if (exactMatch) return true;
-
-    // If no exact match and this is the last active submodule for current module, show as active
     if (
       activeModule &&
       lastActiveSubModules[activeModule] &&
       lastActiveSubModules[activeModule].path === path
     ) {
-      // Only show as active if current path doesn't match any other submodule
       const module = modules.find(m => m.id === activeModule);
       if (module && !findActiveSubModule(module.subModules, location.pathname)) {
         return true;
       }
     }
-
     return false;
   };
 
@@ -172,32 +159,8 @@ export const ModuleSidebar = () => {
   };
 
   const getFilteredBySearchSubModules = (): SidebarSubModuleTreeItem[] => {
-    if (searchQuery.trim() === '' || !activeModule) {
-      const module = modules.find(m => m.id === activeModule);
-      return module ? module.subModules : [];
-    }
-
-    const searchInSubModules = (items: SidebarSubModuleTreeItem[]): SidebarSubModuleTreeItem[] => {
-      const result: SidebarSubModuleTreeItem[] = [];
-      for (const item of items) {
-        const matchesSearch =
-          item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (item.path?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
-
-        const childMatches = item.children ? searchInSubModules(item.children) : [];
-
-        if (matchesSearch || childMatches.length > 0) {
-          result.push({
-            ...item,
-            children: childMatches.length > 0 ? childMatches : item.children,
-          });
-        }
-      }
-      return result;
-    };
-
     const module = modules.find(m => m.id === activeModule);
-    return module ? searchInSubModules(module.subModules) : [];
+    return module ? module.subModules : [];
   };
 
   const renderSubModuleItem = (subModule: SidebarSubModuleTreeItem, level = 0): JSX.Element => {
@@ -207,49 +170,43 @@ export const ModuleSidebar = () => {
     const isParentActive = isActiveOrParent(subModule.path);
 
     return (
-      <div key={subModule.id} className="mb-1">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div
-              className={cn(
-                'flex items-center px-3 py-2 rounded-md text-base transition-colors',
-                'hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground cursor-pointer',
-                isActive
-                  ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
-                  : 'text-sidebar-foreground/80',
-                isParentActive && !isActive && 'text-sidebar-accent',
-                level > 0 && 'ml-4 text-base'
-              )}
-              onClick={() => {
-                if (hasChildren) {
-                  toggleExpanded(subModule.id);
-                } else if (subModule.path) {
-                  navigate(subModule.path);
-                  closeSidebar();
-                }
-              }}
-            >
-              {subModule.icon && (
-                <div className="mr-2">
-                  {getIconComponent(subModule.icon as keyof typeof iconMap, 16)}
-                </div>
-              )}
-              <span className="flex-1 whitespace-normal break-words">{subModule.label}</span>
-              {hasChildren && (
-                <ChevronRight
-                  className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-90')}
-                />
-              )}
+      <div key={subModule.id} className="mb-0.5">
+        <div
+          className={cn(
+            'flex items-center gap-3 px-3 py-2.5 mx-2 rounded-xl text-[13px] font-medium cursor-pointer transition-all duration-200',
+            isActive
+              ? 'bg-primary text-primary-foreground shadow-sm'
+              : 'text-foreground/70 hover:bg-accent/50 hover:text-foreground',
+            isParentActive && !isActive && 'text-foreground',
+            level > 0 && 'ml-4'
+          )}
+          onClick={() => {
+            if (hasChildren) {
+              toggleExpanded(subModule.id);
+            } else if (subModule.path) {
+              navigate(subModule.path);
+              closeSidebar();
+            }
+          }}
+        >
+          {subModule.icon && (
+            <div className={cn(
+              'flex items-center justify-center w-8 h-8 rounded-lg transition-colors',
+              isActive ? 'bg-primary-foreground/20' : 'bg-accent'
+            )}>
+              {getIconComponent(subModule.icon as keyof typeof iconMap, 16)}
             </div>
-          </TooltipTrigger>
-          <TooltipContent side="top" align="center" sideOffset={6} className="text-sm">
-            {subModule.label}
-          </TooltipContent>
-        </Tooltip>
+          )}
+          <span className="flex-1">{subModule.label}</span>
+          {hasChildren && (
+            <ChevronRight
+              className={cn('h-4 w-4 transition-transform duration-200', isExpanded && 'rotate-90')}
+            />
+          )}
+        </div>
 
-        {/* Recursively render children if expanded */}
         {hasChildren && isExpanded && (
-          <div className="mt-1 pl-4 border-l border-sidebar-border/50 ml-4">
+          <div className="mt-1 ml-4 pl-4 border-l-2 border-border/50">
             {subModule.children?.map(child => renderSubModuleItem(child, level + 1))}
           </div>
         )}
@@ -259,141 +216,136 @@ export const ModuleSidebar = () => {
 
   const renderModuleIcon = (module: SidebarModuleItem): JSX.Element => {
     const isActive = activeModule === module.id;
-    const isModuleActive =
-      activeModule === module.id ||
-      (module.subModules && findSubModuleByPath(module.subModules, location.pathname));
 
     return (
       <Tooltip key={module.id}>
         <TooltipTrigger asChild>
-          <div
+          <button
             className={cn(
-              'flex items-center justify-center w-12 h-12 mb-2 rounded-md cursor-pointer transition-all',
+              'flex items-center justify-center w-11 h-11 rounded-xl cursor-pointer transition-all duration-200',
               isActive
-                ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                : 'hover:bg-sidebar-accent/20 hover:text-sidebar-accent-foreground',
-              isModuleActive && !isActive && 'text-sidebar-foreground'
+                ? 'bg-primary text-primary-foreground shadow-md'
+                : 'text-foreground/60 hover:bg-accent hover:text-foreground'
             )}
             onClick={() => setActiveModule(module.id)}
           >
             {getIconComponent(module.icon as keyof typeof iconMap, 20)}
-          </div>
+          </button>
         </TooltipTrigger>
-        <TooltipContent side="right">
-          <p>{module.label}</p>
+        <TooltipContent side="right" className="font-medium">
+          {module.label}
         </TooltipContent>
       </Tooltip>
     );
   };
 
-  const sideBarcontent = (
-    <div className="h-full flex" data-component="sidebar">
-      <div className="w-16 h-full flex flex-col items-center py-4 border-r border-sidebar-border bg-sidebar z-40">
-        <div className="mb-6">
-          <AppLogo short className=" text-sidebar-foreground" imgClassname="w-13 h-15" />
+  const sidebarContent = (
+    <div className="h-full flex bg-card" data-component="sidebar">
+      {/* Icon Rail */}
+      <div className="w-[72px] h-full flex flex-col items-center py-4 bg-card border-r border-border/50">
+        {/* Logo */}
+        <div className="mb-6 p-2">
+          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+            <AppLogo short className="text-primary-foreground" imgClassname="w-6 h-6" />
+          </div>
         </div>
-        <div className="flex-1 flex flex-col items-center">{modules.map(renderModuleIcon)}</div>
-        {/* Only show the open/close button on non-mobile screens */}
-        {!isMobile && (
-          <button
-            className={
-              'mt-4 mb-2 p-1 rounded-full bg-sidebar-accent/10 hover:bg-sidebar-accent transition-colors'
-            }
-            onClick={() => setIsSidebarOpen(v => !v)}
-          >
-            {isSidebarOpen ? (
-              <ChevronLeft className="h-5 w-5 text-sidebar-foreground hover:text-sidebar-accent-foreground" />
-            ) : (
-              <ChevronRight className="h-5 w-5 text-sidebar-foreground hover:text-sidebar-accent-foreground" />
-            )}
-          </button>
-        )}
+
+        {/* Module Icons */}
+        <div className="flex-1 flex flex-col items-center gap-2 w-full px-3">
+          {modules.map(renderModuleIcon)}
+        </div>
+
+        {/* Bottom Actions */}
+        <div className="flex flex-col items-center gap-2 pt-4 border-t border-border/50 w-full px-3">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="flex items-center justify-center w-11 h-11 rounded-xl text-foreground/60 hover:bg-accent hover:text-foreground transition-all">
+                <Settings size={20} strokeWidth={1.5} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Settings</TooltipContent>
+          </Tooltip>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="flex items-center justify-center w-11 h-11 rounded-xl text-foreground/60 hover:bg-accent hover:text-foreground transition-all">
+                <HelpCircle size={20} strokeWidth={1.5} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Help</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="flex items-center justify-center w-11 h-11 rounded-xl text-destructive/70 hover:bg-destructive/10 hover:text-destructive transition-all">
+                <LogOut size={20} strokeWidth={1.5} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Logout</TooltipContent>
+          </Tooltip>
+        </div>
       </div>
 
+      {/* Expandable Panel */}
       <AnimatePresence mode="wait">
-        <motion.div
-          key={isSidebarOpen ? 'open' : 'closed'}
-          initial={{ width: 0, opacity: 0, x: -20 }}
-          animate={{
-            width: isSidebarOpen ? 256 : 0, // 256px = w-64
-            opacity: isSidebarOpen ? 1 : 0,
-            x: isSidebarOpen ? 0 : -20,
-            transition: { type: 'tween', duration: 0.25 },
-          }}
-          exit={{ width: 0, opacity: 0, x: -20, transition: { type: 'tween', duration: 0.2 } }}
-          style={{ overflow: 'hidden' }}
-          className={cn(
-            'h-full flex flex-col border-r',
-            'bg-sidebar-primary-foreground backdrop-blur-sm overflow-hidden',
-            'shadow-[8px_0_15px_-3px_rgba(0,0,0,0.1)] z-30 rounded-r-xl'
-          )}
-        >
-          <div className="px-4 pt-3 border-b border-sidebar-border flex flex-col items-start space-y-2 h-[120px]">
-            <div className="shrink-0">
-              <AppLogo name className="m-2 pt-3" imgClassname="w-full h-full" />
-            </div>
-            <div className="h-6">
-              <h2 className="text-xl font-semibold text-sidebar-foreground">
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 240, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
+            className="h-full flex flex-col bg-card overflow-hidden"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-border/50">
+              <h2 className="text-lg font-semibold text-foreground">
                 {modules.find(m => m.id === activeModule)?.label || 'Dashboard'}
               </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Manage your workspace
+              </p>
             </div>
-          </div>
 
-          {/* Search box */}
-          <div className="px-3 py-2 border-b border-sidebar-border">
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-sidebar-foreground/70" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-full pl-8 pr-3 py-2 text-sm bg-sidebar-accent/10 border-0 rounded-md focus:outline-none focus:ring-1 focus:ring-sidebar-accent text-sidebar-foreground"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
+            {/* Navigation */}
+            <ScrollArea className="flex-1 py-2">
+              {isLoading ? (
+                <div className="flex justify-center items-center h-20">
+                  <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : (
+                <div className="space-y-0.5">
+                  {activeModule && getFilteredBySearchSubModules().map(subModule => renderSubModuleItem(subModule))}
+                </div>
+              )}
+            </ScrollArea>
 
-          {/* Submodules list */}
-          <ScrollArea className="flex-1">
-            {isLoading ? (
-              <div className="flex justify-center items-center h-20">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sidebar-accent"></div>
-              </div>
-            ) : (
-              <div className="py-3 px-2">
-                {activeModule &&
-                  getFilteredBySearchSubModules().map(subModule => renderSubModuleItem(subModule))}
-
-                {/* Show search results from other modules when searching */}
-                {searchQuery.trim() !== '' && (
-                  <>
-                    {modules
-                      .filter(m => m.id !== activeModule)
-                      .flatMap(module => {
-                        const filteredSubModules = module.subModules.filter(
-                          sm =>
-                            sm.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            (sm.path?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
-                        );
-                        return filteredSubModules.length > 0 ? (
-                          <div
-                            key={module.id}
-                            className="mt-4 pt-4 border-t border-sidebar-border/50"
-                          >
-                            <h3 className="px-3 mb-2 text-xs uppercase text-sidebar-foreground/60">
-                              {module.label}
-                            </h3>
-                            {filteredSubModules.map(subModule => renderSubModuleItem(subModule))}
-                          </div>
-                        ) : null;
-                      })}
-                  </>
-                )}
+            {/* Toggle Button */}
+            {!isMobile && (
+              <div className="p-3 border-t border-border/50">
+                <button
+                  onClick={() => setIsSidebarOpen(v => !v)}
+                  className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                >
+                  <ChevronRight className={cn('h-4 w-4 transition-transform', !isSidebarOpen && 'rotate-180')} />
+                  <span>Collapse</span>
+                </button>
               </div>
             )}
-          </ScrollArea>
-        </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
+
+      {/* Collapsed Toggle */}
+      {!isSidebarOpen && !isMobile && (
+        <div className="flex items-center justify-center w-8 bg-card border-r border-border/50">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-1.5 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 
@@ -402,16 +354,12 @@ export const ModuleSidebar = () => {
       {isMobile ? (
         <Sheet open={isOpen} onOpenChange={closeSidebar}>
           <SheetTitle style={{ display: 'none' }} />
-          <SheetContent
-            side="left"
-            className="p-0 w-[280px] bg-sidebar border-r border-sidebar-border"
-            data-component="sidebar"
-          >
-            {sideBarcontent}
+          <SheetContent side="left" className="p-0 w-[320px] border-none">
+            {sidebarContent}
           </SheetContent>
         </Sheet>
       ) : (
-        sideBarcontent
+        sidebarContent
       )}
     </>
   );

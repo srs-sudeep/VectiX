@@ -1,4 +1,4 @@
-import { AppLogo, Button, Sheet, SheetContent, SheetTrigger, SettingsSidebar } from '@/components';
+import { AppLogo, Button, ModuleSidebar, Sheet, SheetContent, SheetTrigger } from '@/components';
 import { getDashboardLink } from '@/lib/redirect';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store';
@@ -136,14 +136,12 @@ export const LandingNavbar = () => {
 
           {/* Settings with enhanced styling */}
           <div className="ml-4 p-2 rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-sm border border-white/20 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-300">
-            <SettingsSidebar />
           </div>
         </nav>
 
         {/* Mobile Menu */}
         <div className="flex items-center gap-3 md:hidden">
           <div className="p-2 rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-sm border border-white/20 dark:border-white/10">
-            <SettingsSidebar />
           </div>
 
           <Sheet>

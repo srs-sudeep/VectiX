@@ -5,17 +5,23 @@ import { Outlet } from 'react-router-dom';
 const MainLayout = () => {
   return (
     <SidebarProvider>
-      <div className="flex h-screen overflow-hidden relative">
+      <div className="flex h-screen overflow-hidden bg-background">
+        {/* Sidebar */}
         <ModuleSidebar />
-        <div className="flex-1 flex flex-col relative overflow-auto bg-background">
-          <div className="fixed -top-1/4 left-10 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="fixed -top-1/4 -right-40 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="fixed -bottom-1/4 right-0 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="fixed -bottom-1/4 left-0 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {/* Navbar */}
           <Navbar />
-          <main className="flex-1 z-10">
-            <Outlet />
+
+          {/* Page Content */}
+          <main className="flex-1 overflow-auto">
+            <div className="p-6 min-h-full">
+              <Outlet />
+            </div>
           </main>
+
+          {/* Footer */}
           <MainFooter />
         </div>
       </div>
