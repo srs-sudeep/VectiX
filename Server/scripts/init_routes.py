@@ -53,6 +53,13 @@ ADMIN_ROUTES = [
         "is_sidebar": True,
         "is_active": True,
     },
+    {
+        "path": "vectix/dashboard/admin",
+        "label": "Admin Dashboard",
+        "icon": "Settings",
+        "is_sidebar": True,
+        "is_active": True,
+    }
 ]
 
 
