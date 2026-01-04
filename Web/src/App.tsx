@@ -1,11 +1,10 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { HashRouter, BrowserRouter } from 'react-router-dom';
-import Router from '@/routes';
+import { Toaster, TooltipProvider, TypographyProvider } from '@/components';
 import { Toaster as Sonner } from '@/components/ui/sonner';
-import { TooltipProvider, Toaster, TypographyProvider } from '@/components';
+import Router from '@/routes';
 import { ThemeProvider } from '@/theme';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
-import { ProtectedComponentProvider } from '@/core';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 
 // Extend the Window interface to include 'electron'
 declare global {
@@ -30,21 +29,19 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ProtectedComponentProvider>
-        <HelmetProvider>
-          <ThemeProvider>
-            <TypographyProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <RouterComponent>
-                  <Router />
-                </RouterComponent>
-              </TooltipProvider>
-            </TypographyProvider>
-          </ThemeProvider>
-        </HelmetProvider>
-      </ProtectedComponentProvider>
+      <HelmetProvider>
+        <ThemeProvider>
+          <TypographyProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <RouterComponent>
+                <Router />
+              </RouterComponent>
+            </TooltipProvider>
+          </TypographyProvider>
+        </ThemeProvider>
+      </HelmetProvider>
     </QueryClientProvider>
   );
 }

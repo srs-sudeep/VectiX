@@ -1,5 +1,5 @@
 import { getMe } from '@/api';
-import { LoginResponse, UserRole, User } from '@/types';
+import { LoginResponse, GoogleAuthResponse, UserRole, User } from '@/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -10,7 +10,7 @@ interface AuthState {
   access_token?: string;
   isAuthenticated: boolean;
 
-  setAuth: (creds: LoginResponse) => Promise<void>;
+  setAuth: (creds: LoginResponse | GoogleAuthResponse) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
   setCurrentRole: (role: UserRole) => void;
