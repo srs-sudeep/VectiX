@@ -1,51 +1,60 @@
 import {
-  Button,
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-  Input,
-  LoadingFallback,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  SearchPanel,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  UserAvatar,
-  useToast,
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuPortal,
+    DropdownMenuSeparator,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+    LoadingFallback,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    SearchPanel,
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+    UserAvatar,
+    useToast
 } from '@/components';
 import { useSidebar } from '@/core';
 import { useIsMobile } from '@/hooks';
 import { getDashboardLink } from '@/lib/redirect';
 import { useAuthStore } from '@/store';
 import { useTheme } from '@/theme';
-import { notifications, UserRole } from '@/types';
-import { Bell, ChevronDown, HelpCircle, LogOut, Menu, Moon, Search, Settings, Sun, User } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { UserRole, notifications } from '@/types';
+import {
+    Bell,
+    ChevronDown,
+    Command,
+    HelpCircle,
+    LogOut,
+    Mail,
+    Menu,
+    Moon,
+    Search,
+    Settings,
+    Sun,
+    User,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const Navbar = () => {
   const { user, logout, setCurrentRole, currentRole } = useAuthStore();
   const { toast } = useToast();
-  const location = useLocation();
   const isMobile = useIsMobile();
   const { toggleSidebar } = useSidebar();
   const { mode, toggleMode } = useTheme();
-  
+
   const [isChangingRole, setIsChangingRole] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -105,68 +114,78 @@ export const Navbar = () => {
   if (isMobile) {
     return (
       <>
-        <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-sm border-b border-border/50">
+        <header className="sticky top-0 z-40 bg-card border-b border-border">
           <div className="flex items-center justify-between h-16 px-4">
-            <button 
-              onClick={toggleSidebar} 
-              className="p-2 -ml-2 rounded-xl hover:bg-accent transition-colors"
+            <button
+              onClick={toggleSidebar}
+              className="p-2.5 -ml-1 rounded-xl bg-accent hover:bg-border transition-colors"
             >
               <Menu className="h-5 w-5" />
             </button>
 
             <div className="flex items-center gap-2">
-              <button 
+              <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 rounded-xl hover:bg-accent transition-colors"
+                className="p-2.5 rounded-xl bg-accent hover:bg-border transition-colors"
               >
                 <Search className="h-5 w-5" />
               </button>
-              
-              <button 
+
+              <button
                 onClick={toggleMode}
-                className="p-2 rounded-xl hover:bg-accent transition-colors"
+                className="p-2.5 rounded-xl bg-accent hover:bg-border transition-colors"
               >
                 {mode === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </button>
 
               <Drawer direction="bottom">
                 <DrawerTrigger asChild>
-                  <button className="p-1 rounded-full">
-                    <UserAvatar name={user?.name || 'User'} role={currentRole || ''} showInfo={false} />
+                  <button className="ml-1 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all">
+                    <UserAvatar
+                      name={user?.name || 'User'}
+                      role={currentRole || ''}
+                      showInfo={false}
+                      className="h-9 w-9"
+                    />
                   </button>
                 </DrawerTrigger>
                 <DrawerContent className="rounded-t-3xl">
                   <DrawerHeader className="pb-2">
-                    <DrawerTitle>Quick Menu</DrawerTitle>
+                    <DrawerTitle className="font-bold">Quick Menu</DrawerTitle>
                   </DrawerHeader>
                   <div className="p-4 space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-accent/50 rounded-2xl">
-                      <UserAvatar name={user?.name || 'User'} role={currentRole || ''} showInfo={false} className="h-12 w-12" />
+                    <div className="flex items-center gap-3 p-4 bg-accent rounded-2xl">
+                      <UserAvatar
+                        name={user?.name || 'User'}
+                        role={currentRole || ''}
+                        showInfo={false}
+                        className="h-12 w-12"
+                      />
                       <div>
-                        <p className="font-semibold">{user?.name}</p>
+                        <p className="font-bold">{user?.name}</p>
                         <p className="text-sm text-muted-foreground capitalize">{currentRole}</p>
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-accent transition-colors text-left">
-                        <User className="h-5 w-5" />
-                        <span>Profile</span>
+                      <button className="w-full flex items-center gap-3 p-3.5 rounded-xl hover:bg-accent transition-colors text-left">
+                        <User className="h-5 w-5 text-muted-foreground" />
+                        <span className="font-medium">Profile</span>
                       </button>
-                      <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-accent transition-colors text-left">
-                        <Settings className="h-5 w-5" />
-                        <span>Settings</span>
+                      <button className="w-full flex items-center gap-3 p-3.5 rounded-xl hover:bg-accent transition-colors text-left">
+                        <Settings className="h-5 w-5 text-muted-foreground" />
+                        <span className="font-medium">Settings</span>
                       </button>
-                      <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-accent transition-colors text-left">
-                        <HelpCircle className="h-5 w-5" />
-                        <span>Help & Support</span>
+                      <button className="w-full flex items-center gap-3 p-3.5 rounded-xl hover:bg-accent transition-colors text-left">
+                        <HelpCircle className="h-5 w-5 text-muted-foreground" />
+                        <span className="font-medium">Help & Support</span>
                       </button>
-                      <button 
+                      <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-destructive/10 text-destructive transition-colors text-left"
+                        className="w-full flex items-center gap-3 p-3.5 rounded-xl hover:bg-destructive/10 text-destructive transition-colors text-left"
                       >
                         <LogOut className="h-5 w-5" />
-                        <span>Log out</span>
+                        <span className="font-medium">Log out</span>
                       </button>
                     </div>
                   </div>
@@ -174,7 +193,7 @@ export const Navbar = () => {
               </Drawer>
             </div>
           </div>
-        </div>
+        </header>
         <SearchPanel isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       </>
     );
@@ -184,29 +203,33 @@ export const Navbar = () => {
     <>
       {showLoader && <LoadingFallback />}
 
-      <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-sm border-b border-border/50">
-        <div className="flex items-center justify-between h-20 px-6">
+      <header className="sticky top-0 z-40 px-6 py-4 bg-background">
+        <div className="flex items-center justify-between">
           {/* Left - Greeting */}
           <div className="flex flex-col">
-            <h1 className="text-2xl font-bold text-foreground">
-              {getGreeting()}, {user?.name?.split(' ')[0] || 'User'}
+            <h1 className="text-xl font-bold text-foreground">
+              {getGreeting()}, {user?.name?.split(' ')[0] || 'User'} 👋
             </h1>
             <p className="text-sm text-muted-foreground">
-              Stay on top of your tasks, monitor progress, and track status.
+              Stay on top of your tasks and track progress
             </p>
           </div>
 
           {/* Right - Actions */}
           <div className="flex items-center gap-3">
-            {/* Search */}
-            <div className="relative hidden lg:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search product"
-                className="w-64 pl-10 h-11 bg-background border-border/50 rounded-full focus-visible:ring-primary/20"
-                onClick={() => setIsSearchOpen(true)}
-                readOnly
-              />
+            {/* Search Bar - Liquid Glass */}
+            <div
+              className="relative hidden lg:flex items-center cursor-pointer"
+              onClick={() => setIsSearchOpen(true)}
+            >
+              <div className="flex items-center gap-3 w-56 h-10 px-4 rounded-xl border border-border bg-card hover:bg-accent transition-colors">
+                <Search className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground flex-1">Search task</span>
+                <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-muted rounded border border-border">
+                  <Command className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-[10px] font-medium text-muted-foreground">F</span>
+                </div>
+              </div>
             </div>
 
             {/* Theme Toggle */}
@@ -214,48 +237,66 @@ export const Navbar = () => {
               <TooltipTrigger asChild>
                 <button 
                   onClick={toggleMode}
-                  className="flex items-center justify-center w-11 h-11 rounded-full border border-border/50 bg-background hover:bg-accent transition-colors"
+                  className="flex items-center justify-center w-10 h-10 rounded-xl bg-card hover:bg-accent border border-border transition-colors"
                 >
-                  {mode === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                  {mode === 'dark' ? <Sun className="h-5 w-5 text-muted-foreground" /> : <Moon className="h-5 w-5 text-muted-foreground" />}
                 </button>
               </TooltipTrigger>
-              <TooltipContent>Toggle Theme</TooltipContent>
+              <TooltipContent className="font-medium">{mode === 'dark' ? 'Light Mode' : 'Dark Mode'}</TooltipContent>
+            </Tooltip>
+
+            {/* Messages */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="flex items-center justify-center w-10 h-10 rounded-xl bg-card hover:bg-accent border border-border transition-colors">
+                  <Mail className="h-5 w-5 text-muted-foreground" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="font-medium">Messages</TooltipContent>
             </Tooltip>
 
             {/* Notifications */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="relative flex items-center justify-center w-11 h-11 rounded-full border border-border/50 bg-background hover:bg-accent transition-colors">
-                  <Bell className="h-5 w-5" />
+                <button className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-card hover:bg-accent border border-border transition-colors">
+                  <Bell className="h-5 w-5 text-muted-foreground" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-destructive text-destructive-foreground rounded-full">
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-destructive text-destructive-foreground rounded-full">
                       {unreadCount}
                     </span>
                   )}
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-80 p-0 rounded-2xl border-border/50" align="end">
-                <div className="flex items-center justify-between p-4 border-b border-border/50">
-                  <h3 className="font-semibold">Notifications</h3>
-                  <button className="text-xs text-primary hover:underline">Mark all as read</button>
+              <PopoverContent className="w-80 p-0 rounded-2xl glass-card" align="end">
+                <div className="flex items-center justify-between p-4 border-b border-border">
+                  <h3 className="font-bold">Notifications</h3>
+                  <button className="text-xs font-medium text-primary hover:underline">
+                    Mark all as read
+                  </button>
                 </div>
                 <div className="max-h-[320px] overflow-y-auto">
                   {notifications.length === 0 ? (
                     <div className="p-8 text-center text-muted-foreground">
                       <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                      <p className="text-sm">No notifications</p>
+                      <p className="text-sm font-medium">No notifications</p>
                     </div>
                   ) : (
                     notifications.map(notification => (
                       <div
                         key={notification.id}
-                        className={`p-4 border-b border-border/50 last:border-0 hover:bg-accent/30 transition-colors cursor-pointer ${notification.read ? 'opacity-60' : ''}`}
+                        className={`p-4 border-b border-border last:border-0 hover:bg-accent transition-colors cursor-pointer ${
+                          notification.read ? 'opacity-60' : ''
+                        }`}
                       >
                         <div className="flex gap-3">
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">{notification.title}</p>
-                            <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{notification.message}</p>
-                            <p className="text-[10px] text-muted-foreground mt-1">{notification.time}</p>
+                            <p className="text-sm font-semibold truncate">{notification.title}</p>
+                            <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                              {notification.message}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground mt-1.5">
+                              {notification.time}
+                            </p>
                           </div>
                           {!notification.read && (
                             <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5" />
@@ -265,8 +306,8 @@ export const Navbar = () => {
                     ))
                   )}
                 </div>
-                <div className="p-2 border-t border-border/50">
-                  <button className="w-full py-2 text-sm text-center text-primary hover:bg-accent rounded-lg transition-colors">
+                <div className="p-2 border-t border-border">
+                  <button className="w-full py-2.5 text-sm font-medium text-center text-primary hover:bg-accent rounded-xl transition-colors">
                     View all notifications
                   </button>
                 </div>
@@ -276,17 +317,35 @@ export const Navbar = () => {
             {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 p-1.5 pr-3 rounded-full border border-border/50 bg-background hover:bg-accent transition-colors">
-                  <UserAvatar name={user?.name || 'User'} role={currentRole || ''} showInfo={false} className="h-8 w-8" />
+                <button className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-card hover:bg-accent border border-border transition-colors">
+                  <UserAvatar
+                    name={user?.name || 'User'}
+                    role={currentRole || ''}
+                    showInfo={false}
+                    className="h-8 w-8"
+                  />
+                  <div className="hidden xl:block text-left">
+                    <p className="text-sm font-semibold leading-tight truncate max-w-[120px]">
+                      {user?.name}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground truncate max-w-[120px]">
+                      {user?.email}
+                    </p>
+                  </div>
                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent className="w-56 rounded-2xl border-border/50 p-2" align="end">
-                <div className="flex items-center gap-3 p-2 mb-2 bg-accent/50 rounded-xl">
-                  <UserAvatar name={user?.name || 'User'} role={currentRole || ''} showInfo={false} className="h-10 w-10" />
+              <DropdownMenuContent className="w-56 rounded-2xl p-2 glass-card" align="end">
+                <div className="flex items-center gap-3 p-3 mb-2 bg-accent rounded-xl">
+                  <UserAvatar
+                    name={user?.name || 'User'}
+                    role={currentRole || ''}
+                    showInfo={false}
+                    className="h-10 w-10"
+                  />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{user?.name}</p>
+                    <p className="font-bold text-sm truncate">{user?.name}</p>
                     <p className="text-xs text-muted-foreground capitalize">{currentRole}</p>
                   </div>
                 </div>
@@ -294,7 +353,7 @@ export const Navbar = () => {
                 {user?.roles && user.roles.length > 1 && (
                   <>
                     <DropdownMenuSub>
-                      <DropdownMenuSubTrigger className="rounded-xl">
+                      <DropdownMenuSubTrigger className="rounded-xl font-medium">
                         <User className="mr-2 h-4 w-4" />
                         Switch Role
                       </DropdownMenuSubTrigger>
@@ -304,12 +363,14 @@ export const Navbar = () => {
                             <DropdownMenuItem
                               key={role}
                               onClick={() => handleRoleChange(role)}
-                              className={`rounded-lg ${role === currentRole ? 'bg-primary/10 text-primary' : ''}`}
+                              className={`rounded-lg font-medium ${
+                                role === currentRole ? 'bg-primary/10 text-primary' : ''
+                              }`}
                               disabled={isChangingRole}
                             >
                               <span className="capitalize">{role}</span>
                               {role === currentRole && (
-                                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
+                                <span className="ml-auto w-2 h-2 rounded-full bg-primary" />
                               )}
                             </DropdownMenuItem>
                           ))}
@@ -321,15 +382,18 @@ export const Navbar = () => {
                 )}
 
                 <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => navigate('/vectix/profile')} className="rounded-xl">
+                  <DropdownMenuItem
+                    onClick={() => navigate('/vectix/profile')}
+                    className="rounded-xl font-medium"
+                  >
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="rounded-xl">
+                  <DropdownMenuItem className="rounded-xl font-medium">
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="rounded-xl">
+                  <DropdownMenuItem className="rounded-xl font-medium">
                     <HelpCircle className="mr-2 h-4 w-4" />
                     Help & Support
                   </DropdownMenuItem>
@@ -337,7 +401,10 @@ export const Navbar = () => {
 
                 <DropdownMenuSeparator className="my-1" />
 
-                <DropdownMenuItem onClick={handleLogout} className="rounded-xl text-destructive focus:text-destructive focus:bg-destructive/10">
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="rounded-xl font-medium text-destructive focus:text-destructive focus:bg-destructive/10"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Log out
                 </DropdownMenuItem>
@@ -345,7 +412,7 @@ export const Navbar = () => {
             </DropdownMenu>
           </div>
         </div>
-      </div>
+      </header>
 
       <SearchPanel isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>

@@ -1,25 +1,34 @@
 import {
-  AppLogo,
-  ScrollArea,
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
+    AppLogo,
+    ScrollArea,
+    Sheet,
+    SheetContent,
+    SheetTitle,
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
 } from '@/components';
 import { useSidebar } from '@/core';
 import { useIsMobile, useSidebarItems } from '@/hooks';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/store';
 import { iconMap, type SidebarModuleItem, type SidebarSubModuleTreeItem } from '@/types';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronRight, HelpCircle, LogOut, Settings } from 'lucide-react';
+import {
+    ChevronLeft,
+    ChevronRight,
+    Download,
+    HelpCircle,
+    LogOut,
+    Settings,
+    Smartphone,
+} from 'lucide-react';
 import { JSX, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const getIconComponent = (iconName: keyof typeof iconMap, size: number) => {
   const IconComponent = iconMap[iconName];
-  return IconComponent ? <IconComponent size={size} strokeWidth={1.5} /> : null;
+  return IconComponent ? <IconComponent size={size} strokeWidth={1.75} /> : null;
 };
 
 function findModuleIdByPath(modules: SidebarModuleItem[], pathname: string): string | null {
@@ -85,6 +94,7 @@ export const ModuleSidebar = () => {
   const { isOpen, closeSidebar } = useSidebar();
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuthStore();
 
   const { sidebarItems: modules = [], isLoading } = useSidebarItems({ is_active: true });
 
@@ -163,6 +173,11 @@ export const ModuleSidebar = () => {
     return module ? module.subModules : [];
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   const renderSubModuleItem = (subModule: SidebarSubModuleTreeItem, level = 0): JSX.Element => {
     const hasChildren = subModule.children && subModule.children.length > 0;
     const isExpanded = expandedItems.includes(subModule.id);
@@ -170,15 +185,14 @@ export const ModuleSidebar = () => {
     const isParentActive = isActiveOrParent(subModule.path);
 
     return (
-      <div key={subModule.id} className="mb-0.5">
-        <div
+      <div key={subModule.id} className={cn('mb-1 w-full', level > 0 && 'ml-3')}>
+        <button
           className={cn(
-            'flex items-center gap-3 px-3 py-2.5 mx-2 rounded-xl text-[13px] font-medium cursor-pointer transition-all duration-200',
+            'w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 group text-left min-w-0',
             isActive
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-foreground/70 hover:bg-accent/50 hover:text-foreground',
-            isParentActive && !isActive && 'text-foreground',
-            level > 0 && 'ml-4'
+              ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
+              : 'text-foreground/70 hover:bg-accent hover:text-foreground',
+            isParentActive && !isActive && 'text-foreground'
           )}
           onClick={() => {
             if (hasChildren) {
@@ -190,26 +204,41 @@ export const ModuleSidebar = () => {
           }}
         >
           {subModule.icon && (
-            <div className={cn(
-              'flex items-center justify-center w-8 h-8 rounded-lg transition-colors',
-              isActive ? 'bg-primary-foreground/20' : 'bg-accent'
-            )}>
+            <span
+              className={cn(
+                'flex items-center justify-center w-8 h-8 rounded-lg shrink-0 transition-colors',
+                isActive ? 'bg-white/20' : 'bg-accent group-hover:bg-border'
+              )}
+            >
               {getIconComponent(subModule.icon as keyof typeof iconMap, 16)}
-            </div>
+            </span>
           )}
-          <span className="flex-1">{subModule.label}</span>
+          <span className="flex-1 min-w-0 truncate">{subModule.label}</span>
           {hasChildren && (
             <ChevronRight
-              className={cn('h-4 w-4 transition-transform duration-200', isExpanded && 'rotate-90')}
+              className={cn(
+                'h-4 w-4 shrink-0 transition-transform duration-200 opacity-60',
+                isExpanded && 'rotate-90'
+              )}
             />
           )}
-        </div>
+        </button>
 
-        {hasChildren && isExpanded && (
-          <div className="mt-1 ml-4 pl-4 border-l-2 border-border/50">
-            {subModule.children?.map(child => renderSubModuleItem(child, level + 1))}
-          </div>
-        )}
+        <AnimatePresence>
+          {hasChildren && isExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden w-full"
+            >
+              <div className="mt-1 ml-6 pl-3 border-l-2 border-border w-full min-w-0">
+                {subModule.children?.map(child => renderSubModuleItem(child, level + 1))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     );
   };
@@ -222,17 +251,20 @@ export const ModuleSidebar = () => {
         <TooltipTrigger asChild>
           <button
             className={cn(
-              'flex items-center justify-center w-11 h-11 rounded-xl cursor-pointer transition-all duration-200',
+              'flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-200',
               isActive
-                ? 'bg-primary text-primary-foreground shadow-md'
-                : 'text-foreground/60 hover:bg-accent hover:text-foreground'
+                ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                : 'text-muted-foreground hover:bg-accent hover:text-foreground'
             )}
             onClick={() => setActiveModule(module.id)}
           >
             {getIconComponent(module.icon as keyof typeof iconMap, 20)}
           </button>
         </TooltipTrigger>
-        <TooltipContent side="right" className="font-medium">
+        <TooltipContent
+          side="right"
+          className="font-medium bg-foreground text-background px-3 py-1.5 rounded-lg"
+        >
           {module.label}
         </TooltipContent>
       </Tooltip>
@@ -240,93 +272,135 @@ export const ModuleSidebar = () => {
   };
 
   const sidebarContent = (
-    <div className="h-full flex bg-card" data-component="sidebar">
-      {/* Icon Rail */}
-      <div className="w-[72px] h-full flex flex-col items-center py-4 bg-card border-r border-border/50">
+    <div className="h-full flex" data-component="sidebar">
+      {/* Icon Rail - White with subtle glass effect */}
+      <div className="w-[72px] h-full flex flex-col items-center py-5 bg-card border-r border-border">
         {/* Logo */}
-        <div className="mb-6 p-2">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+        <div className="mb-8">
+          <div className="w-11 h-11 rounded-xl gradient-primary flex items-center justify-center shadow-lg shadow-primary/20 cursor-pointer hover:scale-105 transition-transform">
             <AppLogo short className="text-primary-foreground" imgClassname="w-6 h-6" />
           </div>
         </div>
+
+        {/* Menu Label */}
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">
+          Menu
+        </span>
 
         {/* Module Icons */}
         <div className="flex-1 flex flex-col items-center gap-2 w-full px-3">
           {modules.map(renderModuleIcon)}
         </div>
 
-        {/* Bottom Actions */}
-        <div className="flex flex-col items-center gap-2 pt-4 border-t border-border/50 w-full px-3">
+        {/* General Label */}
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 mt-4">
+          General
+        </span>
+
+        {/* Bottom Section */}
+        <div className="flex flex-col items-center gap-1 w-full px-3">
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="flex items-center justify-center w-11 h-11 rounded-xl text-foreground/60 hover:bg-accent hover:text-foreground transition-all">
-                <Settings size={20} strokeWidth={1.5} />
+              <button
+                onClick={() => navigate('/vectix/settings')}
+                className="flex items-center justify-center w-11 h-11 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+              >
+                <Settings size={20} strokeWidth={1.75} />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="right">Settings</TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button className="flex items-center justify-center w-11 h-11 rounded-xl text-foreground/60 hover:bg-accent hover:text-foreground transition-all">
-                <HelpCircle size={20} strokeWidth={1.5} />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right">Help</TooltipContent>
+            <TooltipContent side="right" className="font-medium">
+              Settings
+            </TooltipContent>
           </Tooltip>
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="flex items-center justify-center w-11 h-11 rounded-xl text-destructive/70 hover:bg-destructive/10 hover:text-destructive transition-all">
-                <LogOut size={20} strokeWidth={1.5} />
+              <button className="flex items-center justify-center w-11 h-11 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors">
+                <HelpCircle size={20} strokeWidth={1.75} />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="right">Logout</TooltipContent>
+            <TooltipContent side="right" className="font-medium">
+              Help
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center w-11 h-11 rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+              >
+                <LogOut size={20} strokeWidth={1.75} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="font-medium">
+              Logout
+            </TooltipContent>
           </Tooltip>
         </div>
       </div>
 
-      {/* Expandable Panel */}
+      {/* Expandable Panel - Liquid Glass Effect */}
       <AnimatePresence mode="wait">
         {isSidebarOpen && (
           <motion.div
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 240, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
-            transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
-            className="h-full flex flex-col bg-card overflow-hidden"
+            transition={{ type: 'spring', bounce: 0.1, duration: 0.35 }}
+            className="h-full flex flex-col overflow-hidden border-r border-border liquid-glass w-[240px]"
           >
-            {/* Header */}
-            <div className="p-4 border-b border-border/50">
-              <h2 className="text-lg font-semibold text-foreground">
+            {/* Header - With proper text wrapping */}
+            <div className="p-4 pb-3 border-b border-border/50">
+              <h2 className="text-base font-bold text-foreground leading-snug">
                 {modules.find(m => m.id === activeModule)?.label || 'Dashboard'}
               </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Manage your workspace
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">Manage your workspace</p>
             </div>
 
             {/* Navigation */}
-            <ScrollArea className="flex-1 py-2">
+            <ScrollArea className="flex-1 px-3 py-2">
               {isLoading ? (
                 <div className="flex justify-center items-center h-20">
-                  <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : (
-                <div className="space-y-0.5">
-                  {activeModule && getFilteredBySearchSubModules().map(subModule => renderSubModuleItem(subModule))}
+                <div className="space-y-1 w-full min-w-0">
+                  {activeModule &&
+                    getFilteredBySearchSubModules().map(subModule => renderSubModuleItem(subModule))}
                 </div>
               )}
             </ScrollArea>
 
-            {/* Toggle Button */}
+            {/* App Download Card */}
+            <div className="p-3 mt-auto">
+              <div className="relative overflow-hidden rounded-2xl gradient-primary p-4 text-primary-foreground">
+                {/* Decorative circles */}
+                <div className="absolute -right-6 -bottom-6 w-20 h-20 rounded-full border-4 border-white/20" />
+                <div className="absolute -right-10 -bottom-10 w-28 h-28 rounded-full border-4 border-white/10" />
+
+                <div className="relative z-10">
+                  <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center mb-3">
+                    <Smartphone size={16} />
+                  </div>
+                  <h4 className="font-bold text-sm leading-tight">Download our Mobile App</h4>
+                  <p className="text-[11px] opacity-80 mt-1 mb-3">Get easy in another way</p>
+                  <button className="w-full py-2 px-3 bg-white/20 hover:bg-white/30 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-2">
+                    <Download size={14} />
+                    Download
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Collapse Toggle */}
             {!isMobile && (
-              <div className="p-3 border-t border-border/50">
+              <div className="p-3 pt-0">
                 <button
                   onClick={() => setIsSidebarOpen(v => !v)}
-                  className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
                 >
-                  <ChevronRight className={cn('h-4 w-4 transition-transform', !isSidebarOpen && 'rotate-180')} />
+                  <ChevronLeft className="h-4 w-4" />
                   <span>Collapse</span>
                 </button>
               </div>
@@ -335,14 +409,14 @@ export const ModuleSidebar = () => {
         )}
       </AnimatePresence>
 
-      {/* Collapsed Toggle */}
+      {/* Collapsed Toggle Button - Full Height */}
       {!isSidebarOpen && !isMobile && (
-        <div className="flex items-center justify-center w-8 bg-card border-r border-border/50">
+        <div className="w-8 h-full flex items-center justify-center bg-card border-r border-border">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+            className="w-full h-full flex items-center justify-center text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-5 w-5" />
           </button>
         </div>
       )}

@@ -357,7 +357,7 @@ export const DynamicTable: React.FC<DynamicTableProps> = ({
 
   return (
     <div className={cn('w-full', className)}>
-      <div className="bg-card rounded-3xl border border-border/50 shadow-sm overflow-hidden">
+      <div className="glass-card rounded-3xl overflow-hidden">
         {/* Header Section */}
         {(tableHeading || headerActions || !disableSearch || filterConfig.length > 0) && (
           <div className="p-6 space-y-4">

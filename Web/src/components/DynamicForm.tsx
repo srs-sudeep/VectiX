@@ -196,8 +196,8 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     sectionMap[section].push(field);
   });
 
-  const inputBaseClass = "h-11 rounded-xl border-border/50 bg-background focus-visible:ring-primary/20 transition-colors";
-  const labelClass = "text-sm font-medium text-foreground mb-2 block";
+  const inputBaseClass = "h-11 rounded-xl border-2 border-border bg-card hover:border-primary/30 focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 transition-all duration-200";
+  const labelClass = "text-sm font-semibold text-foreground mb-2 block";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 w-full">
@@ -232,7 +232,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                               <SelectTrigger className={cn(inputBaseClass, "flex-1")}>
                                 <SelectValue placeholder={subField.label} />
                               </SelectTrigger>
-                              <SelectContent className="rounded-xl">
+                              <SelectContent className="rounded-xl border-2 border-border shadow-lg">
                                 {subField.options?.map(opt => {
                                   const optionValue = typeof opt === 'string' ? opt : opt.value;
                                   const optionLabel = typeof opt === 'string' ? opt : opt.label;
@@ -307,20 +307,20 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                       role="switch"
                       aria-checked={formData[field.name]}
                       className={cn(
-                        'relative inline-flex items-center h-7 w-12 rounded-full transition-colors duration-200',
-                        formData[field.name] ? 'bg-primary' : 'bg-muted'
+                        'relative inline-flex items-center h-7 w-12 rounded-full transition-all duration-200 border-2',
+                        formData[field.name] ? 'bg-primary border-primary shadow-md shadow-primary/30' : 'bg-muted border-border'
                       )}
                       onClick={() => setFormData({ ...formData, [field.name]: !formData[field.name] })}
                       disabled={disabled || field.disabled}
                     >
                       <span
                         className={cn(
-                          'w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform duration-200',
+                          'w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200',
                           formData[field.name] ? 'translate-x-6' : 'translate-x-1'
                         )}
                       />
                     </button>
-                    <span className={cn('text-sm font-medium', formData[field.name] ? 'text-primary' : 'text-muted-foreground')}>
+                    <span className={cn('text-sm font-semibold', formData[field.name] ? 'text-primary' : 'text-muted-foreground')}>
                       {formData[field.name] ? 'Active' : 'Inactive'}
                     </span>
                   </div>
@@ -330,7 +330,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                     required={field.required}
                     placeholder={field.placeholder}
                     onChange={handleChange}
-                    className="min-h-[120px] rounded-xl border-border/50 bg-background focus-visible:ring-primary/20"
+                    className="min-h-[120px] rounded-xl border-2 border-border bg-card hover:border-primary/30 focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 transition-all duration-200"
                     value={formData[field.name] || ''}
                     disabled={disabled || field.disabled}
                   />
@@ -350,7 +350,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                           <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="p-0 rounded-xl" style={{ width: 'var(--radix-popover-trigger-width)' }}>
+                      <PopoverContent className="p-0 rounded-xl border-2 border-border shadow-lg" style={{ width: 'var(--radix-popover-trigger-width)' }}>
                         <div className="max-h-64 overflow-auto">
                           <div className="sticky top-0 p-2 bg-background border-b border-border/50">
                             <div className="relative">
@@ -456,7 +456,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                     <SelectTrigger className={cn(inputBaseClass, "w-full")}>
                       <SelectValue placeholder="Select..." />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl">
+                    <SelectContent className="rounded-xl border-2 border-border shadow-lg">
                       {field.options?.map(opt => {
                         const optionValue = typeof opt === 'string' ? opt : opt.value;
                         const optionLabel = typeof opt === 'string' ? opt : opt.label;
@@ -535,10 +535,10 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                           key={optionValue}
                           type="button"
                           className={cn(
-                            'px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200',
+                            'px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border-2',
                             selected
-                              ? 'bg-primary text-primary-foreground shadow-sm'
-                              : 'bg-muted text-muted-foreground hover:bg-accent hover:text-foreground'
+                              ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
+                              : 'bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground'
                           )}
                           onClick={() => {
                             const updatedFormData = { ...formData, [field.name]: optionValue };
@@ -590,13 +590,13 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       ))}
 
       {/* Form Actions */}
-      <div className="flex items-center justify-end gap-3 pt-6 border-t border-border/50">
+      <div className="flex items-center justify-end gap-3 pt-6 border-t border-border">
         {onCancel && (
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="px-6 rounded-xl"
+            className="px-6 h-11 rounded-xl border-2 border-border hover:border-primary/30 font-semibold transition-all duration-200"
             disabled={disabled}
           >
             Cancel
@@ -605,7 +605,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         {isSubmitButtonVisible && (
           <Button
             type="submit"
-            className="px-6 rounded-xl bg-primary hover:bg-primary/90"
+            className="px-6 h-11 rounded-xl bg-primary hover:bg-primary/90 font-semibold shadow-md shadow-primary/20 transition-all duration-200"
             disabled={disabled}
           >
             {submitButtonText}
