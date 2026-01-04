@@ -8,30 +8,41 @@ const ModuleManagement = lazyLoad(() => import('@/views/admin/ModuleManagement')
 const RouteManagement = lazyLoad(() => import('@/views/admin/RouteManagement'));
 const RolesManagement = lazyLoad(() => import('@/views/admin/RolesManagement'));
 const UserManagement = lazyLoad(() => import('@/views/admin/UserManagement'));
+
 const AdminRoutes: RouteObject = {
   path: 'vectix/admin',
   element: <MainLayout />,
   children: [
     {
-      path: 'role',
-      element: <RolesManagement />,
-    },
-    {
-      path: 'permission',
-      element: <PermissionManagement />,
-    },
-    {
-      path: 'module',
-      element: <ModuleManagement />,
-    },
-    {
-      path: 'user',
-      element: <UserManagement />,
+      path: 'rbac',
+      children: [
+        {
+          path: 'permission',
+          element: <PermissionManagement />,
+        },
+        {
+          path: 'role',
+          element: <RolesManagement />,
+        },
+        {
+          path: 'user',
+          element: <UserManagement />,
+        },
+      ],
     },
     {
       path: 'route',
-      element: <RouteManagement />,
-    }
+      children: [
+        {
+          path: 'module',
+          element: <ModuleManagement />,
+        },
+        {
+          path: 'path',
+          element: <RouteManagement />,
+        },
+      ],
+    },
   ],
 };
 

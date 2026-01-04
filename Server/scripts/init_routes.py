@@ -16,75 +16,111 @@ from src.app.services.route import RouteService
 from src.core.db.session import async_session_factory
 
 
-# Admin routes configuration
+# Home module routes
+HOME_ROUTES = [
+    {
+        "path": "/vectix/dashboard/admin",
+        "label": "Dashboard",
+        "icon": "home",
+        "is_sidebar": True,
+        "is_active": True,
+        "parent_id": None,
+    },
+    {
+        "path": "/vectix/profile",
+        "label": "Profile",
+        "icon": "user",
+        "is_sidebar": True,
+        "is_active": True,
+        "parent_id": None,
+    },
+]
+
+# Admin module routes with parent-child structure
 ADMIN_ROUTES = [
+    # Parent routes
     {
-        "path": "vectix/admin/role",
-        "label": "Role Management",
-        "icon": "Users",
+        "path": "/vectix/admin/rbac",
+        "label": "Role Based Access Control",
+        "icon": "globeLock",
         "is_sidebar": True,
         "is_active": True,
+        "parent_id": None,
     },
     {
-        "path": "vectix/admin/permission",
-        "label": "Permission Management",
-        "icon": "Shield",
+        "path": "/vectix/admin/route",
+        "label": "Routes",
+        "icon": "database",
         "is_sidebar": True,
         "is_active": True,
+        "parent_id": None,
+    },
+    # Children of RBAC
+    {
+        "path": "/vectix/admin/rbac/permission",
+        "label": "Permissions",
+        "icon": "folderLock",
+        "is_sidebar": True,
+        "is_active": True,
+        "parent_path": "/vectix/admin/rbac",  # Will be resolved to parent_id
     },
     {
-        "path": "vectix/admin/module",
-        "label": "Module Management",
-        "icon": "Package",
+        "path": "/vectix/admin/rbac/role",
+        "label": "Roles",
+        "icon": "userLock",
         "is_sidebar": True,
         "is_active": True,
+        "parent_path": "/vectix/admin/rbac",
     },
     {
-        "path": "vectix/admin/user",
-        "label": "User Management",
-        "icon": "User",
+        "path": "/vectix/admin/rbac/user",
+        "label": "Users",
+        "icon": "users",
         "is_sidebar": True,
         "is_active": True,
+        "parent_path": "/vectix/admin/rbac",
+    },
+    # Children of Routes
+    {
+        "path": "/vectix/admin/route/module",
+        "label": "Modules",
+        "icon": "boxes",
+        "is_sidebar": True,
+        "is_active": True,
+        "parent_path": "/vectix/admin/route",
     },
     {
-        "path": "vectix/admin/route",
-        "label": "Route Management",
-        "icon": "Route",
+        "path": "/vectix/admin/route/path",
+        "label": "Paths",
+        "icon": "route",
         "is_sidebar": True,
         "is_active": True,
+        "parent_path": "/vectix/admin/route",
     },
-    {
-        "path": "vectix/dashboard/admin",
-        "label": "Admin Dashboard",
-        "icon": "Settings",
-        "is_sidebar": True,
-        "is_active": True,
-    }
 ]
 
 
-async def ensure_admin_module(session: AsyncSession) -> Module:
-    """Ensure admin module exists."""
+async def ensure_module(session: AsyncSession, name: str, label: str, icon: str) -> Module:
+    """Ensure a module exists, create if it doesn't."""
     module_service = ModuleService(session)
     
-    # Check if admin module exists
-    query = select(Module).where(Module.name == "admin")
+    query = select(Module).where(Module.name == name)
     result = await session.execute(query)
-    admin_module = result.scalar_one_or_none()
+    module = result.scalar_one_or_none()
 
-    if not admin_module:
-        print("\n📦 Creating admin module...")
-        admin_module = await module_service.create(
-            name="admin",
-            label="Admin",
-            icon="Settings",
+    if not module:
+        print(f"\n📦 Creating {name} module...")
+        module = await module_service.create(
+            name=name,
+            label=label,
+            icon=icon,
             is_active=True,
         )
-        print("✅ Admin module created successfully")
+        print(f"✅ {label} module created successfully")
     else:
-        print("\n✅ Admin module already exists")
+        print(f"\n✅ {label} module already exists")
 
-    return admin_module
+    return module
 
 
 async def get_superuser_role(session: AsyncSession) -> Optional[Role]:
@@ -109,10 +145,11 @@ async def get_superuser_role(session: AsyncSession) -> Optional[Role]:
 
 
 async def init_routes_async(session: AsyncSession) -> None:
-    """Initialize admin routes."""
+    """Initialize routes for home and admin modules."""
     try:
-        # Ensure admin module exists
-        admin_module = await ensure_admin_module(session)
+        # Ensure modules exist
+        home_module = await ensure_module(session, "home", "Home", "home")
+        admin_module = await ensure_module(session, "admin", "Admin", "shield")
 
         # Get superuser role for route assignment
         superuser_role = await get_superuser_role(session)
@@ -121,11 +158,57 @@ async def init_routes_async(session: AsyncSession) -> None:
         # Initialize route service
         route_service = RouteService(session)
 
-        print("\n🛣️  Initializing admin routes...")
+        # Store created routes to resolve parent_id for child routes
+        created_routes: dict[str, int] = {}
+
+        print("\n🛣️  Initializing routes...")
         created_count = 0
         skipped_count = 0
 
-        for route_config in ADMIN_ROUTES:
+        # First, create all parent routes (home and admin parent routes)
+        all_routes = HOME_ROUTES + ADMIN_ROUTES
+        
+        # Separate parent and child routes
+        parent_routes = [r for r in all_routes if r.get("parent_id") is None and "parent_path" not in r]
+        child_routes = [r for r in all_routes if "parent_path" in r]
+
+        # Create parent routes first
+        for route_config in parent_routes:
+            # Check if route already exists
+            query = select(Route).where(Route.path == route_config["path"])
+            result = await session.execute(query)
+            existing_route = result.scalar_one_or_none()
+
+            if existing_route:
+                print(f"   ⏭️  Route '{route_config['path']}' already exists, skipping...")
+                created_routes[route_config["path"]] = existing_route.id
+                skipped_count += 1
+                continue
+
+            # Determine module based on path
+            module = home_module if route_config["path"].startswith("/vectix/dashboard") or route_config["path"].startswith("/vectix/profile") else admin_module
+
+            # Create route
+            try:
+                route = await route_service.create(
+                    path=route_config["path"],
+                    label=route_config["label"],
+                    module_id=module.id,
+                    icon=route_config.get("icon"),
+                    is_active=route_config.get("is_active", True),
+                    is_sidebar=route_config.get("is_sidebar", True),
+                    parent_id=None,
+                    role_ids=role_ids if role_ids else [],
+                )
+                created_routes[route_config["path"]] = route.id
+                print(f"   ✅ Created route: {route_config['path']} ({route_config['label']})")
+                created_count += 1
+            except Exception as e:
+                print(f"   ❌ Failed to create route '{route_config['path']}': {str(e)}")
+                continue
+
+        # Now create child routes with parent_id
+        for route_config in child_routes:
             # Check if route already exists
             query = select(Route).where(Route.path == route_config["path"])
             result = await session.execute(query)
@@ -136,7 +219,25 @@ async def init_routes_async(session: AsyncSession) -> None:
                 skipped_count += 1
                 continue
 
-            # Create route
+            # Get parent_id from created_routes or database
+            parent_path = route_config.get("parent_path")
+            if not parent_path:
+                print(f"   ⚠️  No parent_path specified for '{route_config['path']}', skipping...")
+                continue
+
+            # Check if parent is in created_routes, otherwise fetch from database
+            if parent_path in created_routes:
+                parent_id = created_routes[parent_path]
+            else:
+                parent_query = select(Route).where(Route.path == parent_path)
+                parent_result = await session.execute(parent_query)
+                parent_route = parent_result.scalar_one_or_none()
+                if not parent_route:
+                    print(f"   ⚠️  Parent route '{parent_path}' not found for '{route_config['path']}', skipping...")
+                    continue
+                parent_id = parent_route.id
+
+            # Create child route
             try:
                 route = await route_service.create(
                     path=route_config["path"],
@@ -145,7 +246,7 @@ async def init_routes_async(session: AsyncSession) -> None:
                     icon=route_config.get("icon"),
                     is_active=route_config.get("is_active", True),
                     is_sidebar=route_config.get("is_sidebar", True),
-                    parent_id=None,  # Top-level routes
+                    parent_id=parent_id,
                     role_ids=role_ids if role_ids else [],
                 )
                 print(f"   ✅ Created route: {route_config['path']} ({route_config['label']})")
@@ -154,10 +255,11 @@ async def init_routes_async(session: AsyncSession) -> None:
                 print(f"   ❌ Failed to create route '{route_config['path']}': {str(e)}")
                 continue
 
+        total_routes = len(HOME_ROUTES) + len(ADMIN_ROUTES)
         print(f"\n📊 Summary:")
         print(f"   ✅ Created: {created_count} routes")
         print(f"   ⏭️  Skipped: {skipped_count} routes")
-        print(f"   📦 Total: {len(ADMIN_ROUTES)} routes")
+        print(f"   📦 Total: {total_routes} routes")
 
         if superuser_role:
             print(f"\n✅ All routes assigned to '{superuser_role.name}' role")
@@ -205,4 +307,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
 

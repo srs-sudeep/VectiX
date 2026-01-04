@@ -6,29 +6,28 @@ import { RouteObject } from 'react-router-dom';
 const AdminDashboard = lazyLoad(() => import('@/views/dashboard/AdminDashboard'));
 const Profile = lazyLoad(() => import('@/views/dashboard/Profile'));
 
-
-
 const DashboardRoutes: RouteObject = {
   path: 'vectix/dashboard',
   element: <MainLayout />,
   children: [
     {
-      index: true,
-      element: <AdminDashboard />,
-    },
-    {
-      path: 'profile',
-      element: <Profile />,
-    },
-    {
       path: 'admin',
-      element: <AdminDashboard />,
-    },
-    {
-      path: 'user',
       element: <AdminDashboard />,
     },
   ],
 };
 
+// Profile route (separate from dashboard)
+const ProfileRoute: RouteObject = {
+  path: 'vectix/profile',
+  element: <MainLayout />,
+  children: [
+    {
+      index: true,
+      element: <Profile />,
+    },
+  ],
+};
+
+export { ProfileRoute };
 export default DashboardRoutes;
