@@ -6,6 +6,7 @@ import AuthRoutes from '@/routes/AuthRoutes';
 import ErrorRoutes from '@/routes/ErrorRoutes';
 import { allRouteObjects } from '@/routes/routeModuleMap';
 import { useRoutes } from 'react-router-dom';
+import LandingRoutes from './LandingRoutes';
 
 import { useEffect, useState } from 'react';
 
@@ -24,6 +25,7 @@ const Router = () => {
   const filteredRoutes = filterNestedRoutesByAvailable(allRouteObjects, availableRoutes);
   const routes = useRoutes([
     AuthRoutes,
+    LandingRoutes,
     {
       element: <AuthGuard />,
       children: filteredRoutes,
