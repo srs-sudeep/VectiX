@@ -33,18 +33,3 @@ class RouteResponse(RouteBase):
 
     class Config:
         from_attributes = True
-
-
-class RouteComponentAdd(BaseModel):
-    route_id: int
-    component_id: str
-
-
-class RouteComponentRemove(BaseModel):
-    route_id: int
-    component_id: str
-
-
-class RouteComponentList(BaseModel):
-    route_id: int
-    component_ids: List[str]

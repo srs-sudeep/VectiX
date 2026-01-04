@@ -8,12 +8,6 @@ from src.app.services import UserService, RoleService
 from src.app.schemas import (
     UserResponse,
     UserWithRoles,
-    UserComponentAdd,
-    UserComponentRemove,
-    UserComponentList,
-    UserRouteResponse,
-    UserRouteCreate,
-    UserRoutesList,
 )
 from src.app.api import get_current_user, has_permission
 from src.app.models import User, Role
@@ -126,62 +120,3 @@ async def get_user_filters(
         "status": status_options,
     }
 
-
-@router.post("/add-component", response_model=UserComponentAdd)
-async def add_component_to_user(
-    data: UserComponentAdd,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(has_permission("users", "update")),
-):
-    service = UserService(db)
-    return await service.add_component_to_user(data.user_id, data.component_id)
-
-
-@router.delete("/remove-component", response_model=UserComponentRemove)
-async def remove_component_from_user(
-    data: UserComponentRemove,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(has_permission("users", "update")),
-):
-    service = UserService(db)
-    return await service.remove_component_from_user(data.user_id, data.component_id)
-
-
-@router.get("/components", response_model=UserComponentList)
-async def get_components_by_user(
-    user_id: str = Query(None, description="User ID to fetch components for"),
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(has_permission("users", "read")),
-):
-    service = UserService(db)
-    target_user_id = user_id if user_id is not None else current_user.id
-    return await service.get_components_by_user(target_user_id)
-
-@router.post("/user-route", response_model=UserRouteResponse)
-async def add_user_route(
-    user_route: UserRouteCreate,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(has_permission("users", "update")),
-):
-    service = UserService(db)
-    return await service.add_user_route(user_route)
-
-@router.delete("/user-route/{user_id}/{route_id}", response_model=dict)
-async def delete_user_route(
-    user_id: str,
-    route_id: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(has_permission("users", "update")),
-):
-    service = UserService(db)
-    await service.delete_user_route(user_id, route_id)
-    return {"detail": "User route deleted successfully"}
-
-@router.get("/user-route/{user_id}", response_model=UserRoutesList)
-async def get_user_routes(
-    user_id: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(has_permission("users", "read")),
-):
-    service = UserService(db)
-    return await service.get_user_routes(user_id)

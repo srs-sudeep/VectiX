@@ -18,15 +18,31 @@ from src.app.schemas.permission import (
     PermissionWithSelected,
 )
 from src.app.schemas.role import Role, RoleCreate, RoleInDB, RoleUpdate
-from src.app.schemas.user import User, UserCreate, UserInDB, UserUpdate,UserBase, UserResponse,UserRole,UserWithRoles, UserWithAllRoles, UserRoleWithAssigned, UserComponentAdd, UserComponentRemove, UserComponentList,UserRouteBase,UserRouteCreate,UserRouteResponse, UserRoutesList
+from src.app.schemas.user import (
+    User,
+    UserBase,
+    UserCreate,
+    UserInDB,
+    UserUpdate,
+    UserResponse,
+    UserRole,
+    UserWithRoles,
+    UserWithAllRoles,
+    UserRoleWithAssigned,
+)
 from src.app.schemas.module import (
     ModuleBase,
     ModuleCreate,
     ModuleResponse,
     ModuleUpdate,
 )
-from src.app.schemas.route import RouteBase, RouteCreate, RouteResponse, RouteUpdate, RouteComponentAdd, RouteComponentRemove, RouteComponentList
-from src.app.schemas.sidebar import SidebarModuleItem, SidebarRouteItem, SidebarComponentItem
+from src.app.schemas.route import (
+    RouteBase,
+    RouteCreate,
+    RouteResponse,
+    RouteUpdate,
+)
+from src.app.schemas.sidebar import SidebarModuleItem, SidebarRouteItem
 
 __all__ = [
     "User",
@@ -34,20 +50,11 @@ __all__ = [
     "UserCreate",
     "UserUpdate",
     "UserInDB",
-    "User"
-    "UserBase",
     "UserResponse",
     "UserRole",
     "UserWithRoles",
     "UserWithAllRoles",
     "UserRoleWithAssigned",
-    "UserComponentAdd",
-    "UserComponentRemove",
-    "UserComponentList",
-    "UserRouteBase",
-    "UserRouteCreate",
-    "UserRouteResponse",
-    "UserRoutesList",
     "Role",
     "RoleCreate",
     "RoleUpdate",
@@ -73,10 +80,6 @@ __all__ = [
     "RouteCreate",
     "RouteUpdate",
     "RouteResponse",
-    "RouteComponentAdd",
-    "RouteComponentRemove",
-    "RouteComponentList",
     "SidebarModuleItem",
     "SidebarRouteItem",
-    "SidebarComponentItem",
 ]

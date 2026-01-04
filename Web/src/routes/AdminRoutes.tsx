@@ -8,9 +8,8 @@ const ModuleManagement = lazyLoad(() => import('@/views/admin/ModuleManagement')
 const RouteManagement = lazyLoad(() => import('@/views/admin/RouteManagement'));
 const RolesManagement = lazyLoad(() => import('@/views/admin/RolesManagement'));
 const UserManagement = lazyLoad(() => import('@/views/admin/UserManagement'));
-const ServiceManagement = lazyLoad(() => import('@/views/admin/ServiceManagement'));
 const AdminRoutes: RouteObject = {
-  path: '/horizonx/rbac',
+  path: '/vectix/admin',
   element: <MainLayout />,
   children: [
     {
@@ -32,11 +31,7 @@ const AdminRoutes: RouteObject = {
     {
       path: 'path',
       element: <RouteManagement />,
-    },
-    {
-      path: 'service',
-      element: <ServiceManagement />,
-    },
+    }
   ],
 };
 

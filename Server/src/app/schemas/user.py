@@ -104,35 +104,3 @@ class UserWithAllRoles(BaseModel):
     roles: List[UserRoleWithAssigned]
 
     model_config = {"from_attributes": True}
-
-
-class UserComponentAdd(BaseModel):
-    user_id: str
-    component_id: str
-
-
-class UserComponentRemove(BaseModel):
-    user_id: str
-    component_id: str
-
-
-class UserComponentList(BaseModel):
-    user_id: str
-    component_ids: List[str]
-
-class UserRouteBase(BaseModel):
-    route_id: str
-    has_access: bool = Field(default=False)
-
-class UserRouteCreate(UserRouteBase):
-    user_id: str
-
-class UserRouteResponse(UserRouteBase):
-    user_id: str
-
-    class Config:
-        orm_mode = True
-
-class UserRoutesList(BaseModel):
-    user_id: str
-    routes: List[UserRouteResponse]

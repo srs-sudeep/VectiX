@@ -2,10 +2,6 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict
 
 
-class SidebarComponentItem(BaseModel):
-    component_id: str
-
-
 class SidebarRouteItem(BaseModel):
     id: int
     label: str
@@ -17,7 +13,6 @@ class SidebarRouteItem(BaseModel):
     module_id: Optional[int] = None
     children: List["SidebarRouteItem"] = []
     roles: List[Dict[str, str]] = []
-    components: List[SidebarComponentItem] = []
 
     class Config:
         from_attributes = True
