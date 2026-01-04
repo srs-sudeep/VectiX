@@ -10,8 +10,10 @@ export const fetchUserRoutes = async (): Promise<string[]> => {
   const { data } = await apiClient.get<UserRoute[]>('/api/v1/route/my-routes', {
     silentError: false,
     headers: {
-      'x-error-context': 'Fetching Sidebar Modules',
+      'x-error-context': 'Fetching User Routes',
     },
   });
-  return data.filter(route => route.is_active).map(route => route.path);
+  return data
+    .filter(route => route.is_active)
+    .map(route => (route.path.startsWith('/') ? route.path : `/${route.path}`));
 };

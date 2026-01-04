@@ -9,7 +9,7 @@ const RouteManagement = lazyLoad(() => import('@/views/admin/RouteManagement'));
 const RolesManagement = lazyLoad(() => import('@/views/admin/RolesManagement'));
 const UserManagement = lazyLoad(() => import('@/views/admin/UserManagement'));
 const AdminRoutes: RouteObject = {
-  path: '/vectix/admin',
+  path: 'vectix/admin',
   element: <MainLayout />,
   children: [
     {
@@ -29,7 +29,7 @@ const AdminRoutes: RouteObject = {
       element: <UserManagement />,
     },
     {
-      path: 'path',
+      path: 'route',
       element: <RouteManagement />,
     }
   ],

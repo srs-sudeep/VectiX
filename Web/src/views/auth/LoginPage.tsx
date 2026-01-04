@@ -1,11 +1,12 @@
-import { login, googleLoginWithCode, getGoogleLoginUrl } from '@/api';
+import { getGoogleLoginUrl, googleLoginWithCode, login } from '@/api';
 import { logos } from '@/assets';
 import { Button, HelmetWrapper, Input, toast } from '@/components';
+import { getDashboardLink } from '@/lib';
 import { useAuthStore } from '@/store';
 import { useMutation } from '@tanstack/react-query';
 import { ArrowLeft, ArrowRight, Brain, Eye, EyeOff, Shield, Sparkles, Star, TrendingUp, Users, Zap } from 'lucide-react';
 import type React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
@@ -37,7 +38,9 @@ const LoginPage: React.FC = () => {
           ? 'Welcome! Your account has been created.' 
           : 'You have successfully logged in',
       });
-      navigate('/vectix/dashboard');
+      // Navigate to dashboard based on user role
+      const { currentRole } = useAuthStore.getState();
+      navigate(getDashboardLink(currentRole));
     } catch (error: any) {
       toast({
         title: 'Google Login Failed',
@@ -57,7 +60,9 @@ const LoginPage: React.FC = () => {
         title: 'Success',
         description: 'You have successfully logged in',
       });
-      navigate('/vectix/dashboard');
+      // Navigate to dashboard based on user role
+      const { currentRole } = useAuthStore.getState();
+      navigate(getDashboardLink(currentRole));
     },
     onError: (error: any) => {
       toast({

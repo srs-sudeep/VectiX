@@ -4,9 +4,9 @@ import { useAvailableRoutes } from '@/hooks/useAvailableRoutes.hook';
 import { filterNestedRoutesByAvailable } from '@/lib/filterRoutes';
 import AuthRoutes from '@/routes/AuthRoutes';
 import ErrorRoutes from '@/routes/ErrorRoutes';
+import LandingRoutes from '@/routes/LandingRoutes';
 import { allRouteObjects } from '@/routes/routeModuleMap';
 import { useRoutes } from 'react-router-dom';
-import LandingRoutes from '@/routes/LandingRoutes';
 
 import { useEffect, useState } from 'react';
 
@@ -17,16 +17,15 @@ const Router = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setMinTimeElapsed(true);
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
 
   const filteredRoutes = filterNestedRoutesByAvailable(allRouteObjects, availableRoutes);
-  console.log(filteredRoutes);
   const routes = useRoutes([
-    AuthRoutes,
     LandingRoutes,
+    AuthRoutes,
     {
       element: <AuthGuard />,
       children: filteredRoutes,
