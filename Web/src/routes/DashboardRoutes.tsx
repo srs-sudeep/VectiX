@@ -8,7 +8,7 @@ const Profile = lazyLoad(() => import('@/views/dashboard/Profile'));
 
 
 const DashboardRoutes = {
-  path: 'horizonx/workbench',
+  path: 'vectix/dashboard',
   element: <MainLayout />,
   children: [
     {
@@ -16,11 +16,11 @@ const DashboardRoutes = {
       element: <Profile />,
     },
     {
-      path: 'dashboard/admin',
+      path: 'admin',
       element: <AdminDashboard />,
     },
     {
-      path: 'dashboard/user',
+      path: 'user',
       element: <AdminDashboard />,
     },
   ],
