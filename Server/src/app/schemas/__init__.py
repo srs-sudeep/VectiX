@@ -1,5 +1,6 @@
 """Schemas package."""
 
+# Auth & RBAC Schemas
 from src.app.schemas.auth import (
     Login,
     RefreshToken,
@@ -44,7 +45,98 @@ from src.app.schemas.route import (
 )
 from src.app.schemas.sidebar import SidebarModuleItem, SidebarRouteItem
 
+# Personal Finance Schemas
+from src.app.schemas.account import (
+    Account,
+    AccountBase,
+    AccountCreate,
+    AccountUpdate,
+    AccountInDB,
+    AccountSummary,
+    AccountWithTransactions,
+)
+from src.app.schemas.transaction import (
+    Transaction,
+    TransactionBase,
+    TransactionCreate,
+    TransactionUpdate,
+    TransactionInDB,
+    TransactionWithDetails,
+    TransactionSummary,
+    TransactionFilter,
+)
+from src.app.schemas.category import (
+    Category,
+    CategoryBase,
+    CategoryCreate,
+    CategoryUpdate,
+    CategoryInDB,
+    CategoryWithStats,
+)
+from src.app.schemas.subscription import (
+    Subscription,
+    SubscriptionBase,
+    SubscriptionCreate,
+    SubscriptionUpdate,
+    SubscriptionInDB,
+    SubscriptionWithAccount,
+    UpcomingSubscription,
+)
+from src.app.schemas.attachment import (
+    Attachment,
+    AttachmentBase,
+    AttachmentCreate,
+    AttachmentUpdate,
+    AttachmentInDB,
+    AttachmentWithTransaction,
+)
+
+# Splitwise Schemas
+from src.app.schemas.group import (
+    Group,
+    GroupBase,
+    GroupCreate,
+    GroupUpdate,
+    GroupInDB,
+    GroupMemberSchema,
+    GroupWithMembers,
+    GroupSummary,
+    GroupBalance,
+    GroupDetailWithBalances,
+)
+from src.app.schemas.group_expense import (
+    GroupExpense,
+    GroupExpenseBase,
+    GroupExpenseCreate,
+    GroupExpenseUpdate,
+    GroupExpenseInDB,
+    ExpenseSplitInput,
+    ExpenseSplitSchema,
+    GroupExpenseWithSplits,
+    GroupExpenseSummary,
+)
+from src.app.schemas.settlement import (
+    Settlement,
+    SettlementBase,
+    SettlementCreate,
+    SettlementUpdate,
+    SettlementInDB,
+    SettlementWithUsers,
+    SettlementSuggestion,
+)
+
+# Dashboard Schemas
+from src.app.schemas.dashboard import (
+    DashboardSummary,
+    MonthlyBreakdown,
+    CategoryBreakdown,
+    AnalyticsData,
+    MonthlySummary,
+    OnboardingData,
+)
+
 __all__ = [
+    # Auth & User
     "User",
     "UserBase",
     "UserCreate",
@@ -82,4 +174,73 @@ __all__ = [
     "RouteResponse",
     "SidebarModuleItem",
     "SidebarRouteItem",
+    # Personal Finance
+    "Account",
+    "AccountBase",
+    "AccountCreate",
+    "AccountUpdate",
+    "AccountInDB",
+    "AccountSummary",
+    "AccountWithTransactions",
+    "Transaction",
+    "TransactionBase",
+    "TransactionCreate",
+    "TransactionUpdate",
+    "TransactionInDB",
+    "TransactionWithDetails",
+    "TransactionSummary",
+    "TransactionFilter",
+    "Category",
+    "CategoryBase",
+    "CategoryCreate",
+    "CategoryUpdate",
+    "CategoryInDB",
+    "CategoryWithStats",
+    "Subscription",
+    "SubscriptionBase",
+    "SubscriptionCreate",
+    "SubscriptionUpdate",
+    "SubscriptionInDB",
+    "SubscriptionWithAccount",
+    "UpcomingSubscription",
+    "Attachment",
+    "AttachmentBase",
+    "AttachmentCreate",
+    "AttachmentUpdate",
+    "AttachmentInDB",
+    "AttachmentWithTransaction",
+    # Splitwise
+    "Group",
+    "GroupBase",
+    "GroupCreate",
+    "GroupUpdate",
+    "GroupInDB",
+    "GroupMemberSchema",
+    "GroupWithMembers",
+    "GroupSummary",
+    "GroupBalance",
+    "GroupDetailWithBalances",
+    "GroupExpense",
+    "GroupExpenseBase",
+    "GroupExpenseCreate",
+    "GroupExpenseUpdate",
+    "GroupExpenseInDB",
+    "ExpenseSplitInput",
+    "ExpenseSplitSchema",
+    "GroupExpenseWithSplits",
+    "GroupExpenseSummary",
+    "Settlement",
+    "SettlementBase",
+    "SettlementCreate",
+    "SettlementUpdate",
+    "SettlementInDB",
+    "SettlementWithUsers",
+    "SettlementSuggestion",
+    # Dashboard
+    "DashboardSummary",
+    "MonthlyBreakdown",
+    "CategoryBreakdown",
+    "AnalyticsData",
+    "MonthlySummary",
+    "OnboardingData",
 ]

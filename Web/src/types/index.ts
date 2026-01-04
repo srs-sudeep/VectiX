@@ -15,4 +15,6 @@ export * from './core/route.types';
 export * from './core/rolesApi.types';
 export * from './core/user.types';
 export * from './core/service.types';
+/* Type definitions for Vectix */
+export * from './vectix';
 /* Type definitions for device permissions */
