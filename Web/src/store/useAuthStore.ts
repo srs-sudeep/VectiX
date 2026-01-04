@@ -1,5 +1,5 @@
 import { getMe } from '@/api';
-import { LoginResponse, GoogleAuthResponse, UserRole, User } from '@/types';
+import { GoogleAuthResponse, LoginResponse, User, UserRole } from '@/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
