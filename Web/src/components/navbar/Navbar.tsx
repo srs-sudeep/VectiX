@@ -114,7 +114,7 @@ export const Navbar = () => {
   if (isMobile) {
     return (
       <>
-        <header className="sticky top-0 z-40 bg-card border-b border-border">
+        <header className="sticky top-0 z-40 navbar-glass">
           <div className="flex items-center justify-between h-16 px-4">
             <button
               onClick={toggleSidebar}
@@ -203,7 +203,7 @@ export const Navbar = () => {
     <>
       {showLoader && <LoadingFallback />}
 
-      <header className="sticky top-0 z-40 px-6 py-4 bg-background">
+      <header className="sticky top-0 z-40 px-6 py-4 navbar-glass">
         <div className="flex items-center justify-between">
           {/* Left - Greeting */}
           <div className="flex flex-col">

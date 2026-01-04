@@ -183,12 +183,14 @@ export const ModuleSidebar = () => {
     const isExpanded = expandedItems.includes(subModule.id);
     const isActive = isActivePath(subModule.path);
     const isParentActive = isActiveOrParent(subModule.path);
+    // All nested items truncate to prevent overflow
+    const shouldTruncate = level >= 1;
 
     return (
-      <div key={subModule.id} className={cn('mb-1 w-full', level > 0 && 'ml-3')}>
+      <div key={subModule.id} className="mb-1">
         <button
           className={cn(
-            'w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 group text-left min-w-0',
+            'w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 group text-left overflow-hidden',
             isActive
               ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
               : 'text-foreground/70 hover:bg-accent hover:text-foreground',
@@ -213,7 +215,9 @@ export const ModuleSidebar = () => {
               {getIconComponent(subModule.icon as keyof typeof iconMap, 16)}
             </span>
           )}
-          <span className="flex-1 min-w-0 truncate">{subModule.label}</span>
+          <span className={cn('flex-1 min-w-0', shouldTruncate ? 'truncate' : 'leading-tight')}>
+            {subModule.label}
+          </span>
           {hasChildren && (
             <ChevronRight
               className={cn(
@@ -231,9 +235,9 @@ export const ModuleSidebar = () => {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="overflow-hidden w-full"
+              className="overflow-hidden"
             >
-              <div className="mt-1 ml-6 pl-3 border-l-2 border-border w-full min-w-0">
+              <div className="mt-1 pl-4 ml-4 border-l-2 border-border">
                 {subModule.children?.map(child => renderSubModuleItem(child, level + 1))}
               </div>
             </motion.div>
@@ -365,7 +369,7 @@ export const ModuleSidebar = () => {
                   <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : (
-                <div className="space-y-1 w-full min-w-0">
+                <div className="space-y-1 w-full min-w-0 pr-0">
                   {activeModule &&
                     getFilteredBySearchSubModules().map(subModule => renderSubModuleItem(subModule))}
                 </div>
