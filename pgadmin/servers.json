@@ -1,0 +1,14 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "Vectix",
+            "Group": "Servers",
+            "Host": "vectix_postgres",
+            "Port": 5432,
+            "MaintenanceDB": "vectix",
+            "Username": "postgres",
+            "PassFile": "/pgpass",
+            "SSLMode": "prefer"
+        }
+    }
+}

@@ -1,0 +1,51 @@
+export interface UserRoleAPI {
+  role_id: number;
+  name: string;
+  isAssigned: boolean;
+}
+export interface GetUsersParams {
+  search?: string;
+  status?: boolean;
+  roles?: number[];
+  limit?: number;
+  offset?: number;
+}
+
+export interface UserAPI {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  email: string;
+  username: string;
+  is_active: boolean;
+  roles: UserRoleAPI[];
+}
+export interface UserListResponse {
+  total_count: number;
+  users: UserAPI[];
+}
+
+export interface UserRoleFilter {
+  role_id: number;
+  name: string;
+}
+
+export interface UserStatusFilter {
+  label: string;
+  value: boolean;
+}
+
+export interface UserFiltersResponse {
+  roles: UserRoleFilter[];
+  status: UserStatusFilter[];
+}
+
+export interface UserComponentsResponse {
+  user_id: string;
+  component_ids: string[];
+}
+
+export interface UserComponentPayload {
+  user_id: string;
+  component_id: string;
+}
