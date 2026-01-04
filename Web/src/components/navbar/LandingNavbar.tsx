@@ -1,4 +1,4 @@
-import { AppLogo, Button, ModuleSidebar, Sheet, SheetContent, SheetTrigger } from '@/components';
+import { AppLogo, Button, Sheet, SheetContent, SheetTrigger } from '@/components';
 import { getDashboardLink } from '@/lib/redirect';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store';
