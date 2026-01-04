@@ -8,6 +8,7 @@ from src.app.services.base import BaseService
 from src.app.services.module import ModuleService
 from src.app.services.route import RouteService
 from src.app.services.sidebar import SidebarService
+from src.app.services.google_auth import GoogleAuthService
 
 __all__ = [
     "UserService",
@@ -20,4 +21,5 @@ __all__ = [
     "ModuleService",
     "RouteService",
     "SidebarService",
+    "GoogleAuthService",
 ]

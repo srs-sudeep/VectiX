@@ -1,6 +1,15 @@
 """Schemas package."""
 
-from src.app.schemas.auth import Login, RefreshToken, Token, TokenPayload
+from src.app.schemas.auth import (
+    Login,
+    RefreshToken,
+    Token,
+    TokenPayload,
+    GoogleAuthRequest,
+    GoogleTokenRequest,
+    GoogleUserInfo,
+    GoogleAuthResponse,
+)
 from src.app.schemas.permission import (
     Permission,
     PermissionCreate,
@@ -52,6 +61,10 @@ __all__ = [
     "TokenPayload",
     "Login",
     "RefreshToken",
+    "GoogleAuthRequest",
+    "GoogleTokenRequest",
+    "GoogleUserInfo",
+    "GoogleAuthResponse",
     "ModuleBase",
     "ModuleCreate",
     "ModuleUpdate",

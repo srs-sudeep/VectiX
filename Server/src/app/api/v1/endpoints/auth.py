@@ -1,13 +1,25 @@
 """Authentication endpoints."""
 
-from fastapi import APIRouter, Depends, HTTPException, status, Form, UploadFile, File
+from urllib.parse import urlencode
+
+from fastapi import APIRouter, Depends, HTTPException, status, Form, UploadFile, File, Query
+from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.app.schemas import Login, RefreshToken, Token, UserResponse
-from src.app.services import AuthService, UserService
+from src.app.schemas import (
+    Login,
+    RefreshToken,
+    Token,
+    UserResponse,
+    GoogleAuthRequest,
+    GoogleTokenRequest,
+    GoogleAuthResponse,
+)
+from src.app.services import AuthService, UserService, GoogleAuthService
 from src.core.utils import create_rate_limiter
 from src.core.db import get_db
 from src.core.utils import file_upload_service
+from src.core import settings
 
 router = APIRouter()
 
@@ -99,4 +111,97 @@ async def register(
         photo=user.photo,
         roles=[role.name for role in user.roles] if user.roles else [],
     )
+
+
+# ============================================================================
+# Google OAuth Endpoints
+# ============================================================================
+
+
+@router.get("/google/login")
+async def google_login(
+    redirect_uri: str = Query(None, description="Custom redirect URI for OAuth callback"),
+) -> dict:
+    """
+    Get Google OAuth login URL.
+    
+    The frontend should redirect the user to this URL to initiate Google OAuth.
+    
+    Args:
+        redirect_uri: Optional custom redirect URI (defaults to settings.GOOGLE_REDIRECT_URI)
+    
+    Returns:
+        Dictionary with the Google OAuth URL
+    """
+    oauth_redirect = redirect_uri or settings.GOOGLE_REDIRECT_URI
+    
+    params = {
+        "client_id": settings.GOOGLE_CLIENT_ID,
+        "redirect_uri": oauth_redirect,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "access_type": "offline",
+        "prompt": "consent",
+    }
+    
+    google_oauth_url = f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(params)}"
+    
+    return {"url": google_oauth_url}
+
+
+@router.post("/google/callback", response_model=GoogleAuthResponse)
+async def google_callback(
+    auth_request: GoogleAuthRequest,
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(create_rate_limiter(10, 60)),  # 10 requests per minute
+) -> GoogleAuthResponse:
+    """
+    Handle Google OAuth callback with authorization code.
+    
+    This endpoint exchanges the authorization code for tokens and creates/retrieves
+    the user account.
+    
+    Args:
+        auth_request: Contains the authorization code from Google
+        db: Database session
+    
+    Returns:
+        Access and refresh tokens for the authenticated user
+    """
+    google_service = GoogleAuthService(db)
+    
+    result = await google_service.authenticate_with_code(
+        code=auth_request.code,
+        redirect_uri=auth_request.redirect_uri,
+    )
+    
+    return GoogleAuthResponse(**result)
+
+
+@router.post("/google/token", response_model=GoogleAuthResponse)
+async def google_token_auth(
+    token_request: GoogleTokenRequest,
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(create_rate_limiter(10, 60)),  # 10 requests per minute
+) -> GoogleAuthResponse:
+    """
+    Authenticate using Google ID token.
+    
+    Use this endpoint when the frontend handles the OAuth flow (e.g., using 
+    Google Sign-In for Web) and sends the ID token directly.
+    
+    Args:
+        token_request: Contains the Google ID token
+        db: Database session
+    
+    Returns:
+        Access and refresh tokens for the authenticated user
+    """
+    google_service = GoogleAuthService(db)
+    
+    result = await google_service.authenticate_with_id_token(
+        id_token=token_request.id_token,
+    )
+    
+    return GoogleAuthResponse(**result)
 

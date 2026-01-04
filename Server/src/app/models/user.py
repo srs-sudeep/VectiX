@@ -18,32 +18,23 @@ user_role = Table(
     Column("role_id", Integer, ForeignKey("role.role_id"), primary_key=True),
 )
 
-user_component = Table(
-    "user_component",
-    Base.metadata,
-    Column("user_id", String, ForeignKey("user.id"), primary_key=True),
-    Column("component_id", String, primary_key=True, nullable=True),
-)
-
-user_page = Table(
-    "user_page",
-    Base.metadata,
-    Column("user_id", String, ForeignKey("user.id"), primary_key=True),
-    Column("route_id", String, ForeignKey("route.id"), primary_key=True, nullable=True),
-)
-
 class User(Base):
     """User model."""
     __tablename__ = "user"
     
     id = Column(String, primary_key=True, unique=True, index=True)
     name = Column(String, nullable=False)
-    phoneNumber = Column(String, nullable=False)
+    phoneNumber = Column(String, nullable=True)  # Nullable for OAuth users
     email = Column(String, unique=True, index=True, nullable=False)
     username = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=True)  # Nullable for OAuth users
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
+    
+    # OAuth fields
+    google_id = Column(String, unique=True, nullable=True, index=True)
+    auth_provider = Column(String, nullable=True, default="local")  # 'local', 'google'
+    photo = Column(String, nullable=True)  # Profile picture URL from OAuth
 
     # Relationships
     roles: Mapped[List["Role"]] = relationship(
