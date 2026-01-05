@@ -1,7 +1,3 @@
-/**
- * Subscriptions Management Page
- */
-
 import { useState } from 'react';
 import {
   HelmetWrapper,
@@ -25,7 +21,7 @@ import {
 } from '@/hooks/vectix';
 import type { Subscription, SubscriptionCreate, SubscriptionUpdate } from '@/types/vectix';
 import type { FieldType } from '@/types';
-import { Plus, Pencil, Trash2, Check, Calendar, Bell } from 'lucide-react';
+import { Plus, Pencil, Trash2, Check, Calendar } from 'lucide-react';
 
 const SubscriptionsPage = () => {
   const { data: subscriptions = [], isLoading } = useSubscriptions();

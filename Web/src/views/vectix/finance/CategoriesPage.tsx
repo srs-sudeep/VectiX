@@ -1,7 +1,3 @@
-/**
- * Categories Management Page
- */
-
 import { useState } from 'react';
 import {
   HelmetWrapper,

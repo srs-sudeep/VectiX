@@ -1,7 +1,3 @@
-/**
- * Transactions Page
- */
-
 import { useState } from 'react';
 import {
   HelmetWrapper,
