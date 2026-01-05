@@ -49,7 +49,7 @@ const GroupsPage = () => {
       } as GroupCreate);
       toast({ title: 'Group created successfully' });
       setCreateDialogOpen(false);
-      navigate(`/vectix/groups/${newGroup.id}`);
+      navigate(`/vectix/splitwise/groups/${newGroup.id}`);
     } catch (error) {
       toast({ title: 'Failed to create group', variant: 'destructive' });
     }
@@ -120,7 +120,7 @@ const GroupsPage = () => {
               <div
                 key={group.id}
                 className="glass-card rounded-2xl p-6 cursor-pointer hover:shadow-lg transition-all group"
-                onClick={() => navigate(`/vectix/groups/${group.id}`)}
+                onClick={() => navigate(`/vectix/splitwise/groups/${group.id}`)}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="p-3 rounded-xl bg-primary/10">

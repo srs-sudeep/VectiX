@@ -1,6 +1,6 @@
 import AdminRoutes from '@/routes/AdminRoutes';
 import DashboardRoutes, { ProfileRoute } from './DashboardRoutes';
-import VectixRoutes from './VectixRoutes';
+import VectixRoutes from '@/routes/VectixRoutes';
 
 export const allRouteObjects = [
   AdminRoutes,

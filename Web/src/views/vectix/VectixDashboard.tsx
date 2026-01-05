@@ -36,15 +36,15 @@ const VectixDashboard = () => {
       <div className="space-y-6">
         {/* Quick Actions */}
         <div className="flex flex-wrap gap-3">
-          <Button onClick={() => navigate('/vectix/transactions/add?type=expense')} className="gap-2">
+          <Button onClick={() => navigate('/vectix/finance/transactions?type=expense')} className="gap-2">
             <Plus className="h-4 w-4" />
             Add Expense
           </Button>
-          <Button variant="outline" onClick={() => navigate('/vectix/transactions/add?type=income')} className="gap-2">
+          <Button variant="outline" onClick={() => navigate('/vectix/finance/transactions?type=income')} className="gap-2">
             <Plus className="h-4 w-4" />
             Add Income
           </Button>
-          <Button variant="outline" onClick={() => navigate('/vectix/groups/expense/add')} className="gap-2">
+          <Button variant="outline" onClick={() => navigate('/vectix/splitwise/groups')} className="gap-2">
             <Users className="h-4 w-4" />
             Add Group Expense
           </Button>
@@ -140,7 +140,7 @@ const VectixDashboard = () => {
           <div className="glass-card rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Upcoming Payments</h3>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/vectix/subscriptions')}>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/vectix/finance/subscriptions')}>
                 View All
               </Button>
             </div>
@@ -167,7 +167,7 @@ const VectixDashboard = () => {
         {/* Quick Navigation */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <button
-            onClick={() => navigate('/vectix/accounts')}
+            onClick={() => navigate('/vectix/finance/accounts')}
             className="glass-card rounded-2xl p-6 text-left hover:shadow-lg transition-shadow"
           >
             <CreditCard className="h-8 w-8 text-primary mb-3" />
@@ -175,7 +175,7 @@ const VectixDashboard = () => {
             <p className="text-sm text-muted-foreground">Manage wallets & banks</p>
           </button>
           <button
-            onClick={() => navigate('/vectix/transactions')}
+            onClick={() => navigate('/vectix/finance/transactions')}
             className="glass-card rounded-2xl p-6 text-left hover:shadow-lg transition-shadow"
           >
             <TrendingUp className="h-8 w-8 text-success mb-3" />
@@ -183,7 +183,7 @@ const VectixDashboard = () => {
             <p className="text-sm text-muted-foreground">View all transactions</p>
           </button>
           <button
-            onClick={() => navigate('/vectix/groups')}
+            onClick={() => navigate('/vectix/splitwise/groups')}
             className="glass-card rounded-2xl p-6 text-left hover:shadow-lg transition-shadow"
           >
             <Users className="h-8 w-8 text-info mb-3" />
@@ -191,12 +191,12 @@ const VectixDashboard = () => {
             <p className="text-sm text-muted-foreground">Split expenses</p>
           </button>
           <button
-            onClick={() => navigate('/vectix/analytics')}
+            onClick={() => navigate('/vectix/finance/categories')}
             className="glass-card rounded-2xl p-6 text-left hover:shadow-lg transition-shadow"
           >
             <PiggyBank className="h-8 w-8 text-warning mb-3" />
-            <h4 className="font-semibold">Analytics</h4>
-            <p className="text-sm text-muted-foreground">Track spending</p>
+            <h4 className="font-semibold">Categories</h4>
+            <p className="text-sm text-muted-foreground">Manage categories</p>
           </button>
         </div>
       </div>
