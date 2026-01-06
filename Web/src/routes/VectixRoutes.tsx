@@ -21,9 +21,6 @@ import MainLayout from '@/layouts/MainLayout';
 import lazyLoad from '@/lib/lazyLoad';
 import { RouteObject } from 'react-router-dom';
 
-// Main Dashboard
-const VectixDashboard = lazyLoad(() => import('@/views/vectix/VectixDashboard'));
-
 // Personal Finance Module
 const AccountsPage = lazyLoad(() => import('@/views/vectix/finance/AccountsPage'));
 const TransactionsPage = lazyLoad(() => import('@/views/vectix/finance/TransactionsPage'));
@@ -41,16 +38,7 @@ const GroupsPage = lazyLoad(() => import('@/views/vectix/splitwise/GroupsPage'))
 const VectixRoutes: RouteObject = {
   path: 'vectix',
   element: <MainLayout />,
-  children: [
-    // Main Dashboard (Overview)
-    {
-      index: true,
-      element: <VectixDashboard />,
-    },
-    {
-      path: 'dashboard',
-      element: <VectixDashboard />,
-    },
+  children: [   
     
     // ==================== Personal Finance Module ====================
     {

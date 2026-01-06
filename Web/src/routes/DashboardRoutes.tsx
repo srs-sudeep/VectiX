@@ -1,5 +1,6 @@
 import MainLayout from '@/layouts/MainLayout';
 import lazyLoad from '@/lib/lazyLoad';
+import { VectixDashboard } from '@/views/vectix';
 import { RouteObject } from 'react-router-dom';
 
 // Dashboard Pages
@@ -10,6 +11,10 @@ const DashboardRoutes: RouteObject = {
   path: 'vectix/dashboard',
   element: <MainLayout />,
   children: [
+    { 
+        path: 'client',
+        element: <VectixDashboard />,
+    },
     {
       path: 'admin',
       element: <AdminDashboard />,
